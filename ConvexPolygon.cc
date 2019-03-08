@@ -13,7 +13,7 @@ static double cross(const Point& a, const Point& b, const Point& c) {
 }
 
 static bool compare(const Point& p, const Point& q) {
-    if (p.X() < abs(q.X() + 1e-12) and p.X() > abs(q.X() - 1e-12)) return p.Y() < q.Y();
+    if (p.X() < q.X() + 1e-12 and p.X() > q.X() - 1e-12) return p.Y() < q.Y();
     else return p.X() < q.X();
 }
 
@@ -23,7 +23,7 @@ static bool compare(const Point& p, const Point& q) {
  *	Andrew's monotone chain algorithm
  */
 vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
-	points.sort(v.begin(),v.end(), compare);
+	sort(points.begin(), points.end(), compare);
 	int n = points.size();
 
 	vector<Point> lower_hull;
@@ -36,7 +36,7 @@ vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 	}
 
 	vector<Point> upper_hull;
-	int k = 0;	// The size of the upper hull
+	k = 0;	// The size of the upper hull
 	for (int i=n-1; i>=0; --i) {
 		while (k >= 2 and cross(upper_hull[k-2], upper_hull[k-1], points[i]) <= 0) {
 			upper_hull.pop_back(); --k;
@@ -47,9 +47,11 @@ vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 	lower_hull.pop_back();	// The last point of each list is the first of the other
 	upper_hull.pop_back();
 
-	return lower_hull.insert(lower_hull.end(), upper_hull.begin(), upper_hull.end());
+	lower_hull.insert(lower_hull.end(), upper_hull.begin(), upper_hull.end());
+
+	return lower_hull;
 }
 
-ConvexPolygon::ConvexPolygon(vector<Point> points) {
+ConvexPolygon::ConvexPolygon(vector<Point>& points) {
 	vertices = convex_hull(points);
 }

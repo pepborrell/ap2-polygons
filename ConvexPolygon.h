@@ -2,6 +2,7 @@
 #define ConvexPolygon_h
 
 #include <vector>
+#include <algorithm>
 #include "Point.hh"
 
 using namespace std;
