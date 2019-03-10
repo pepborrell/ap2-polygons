@@ -12,6 +12,8 @@ static double cross(const Point& a, const Point& b, const Point& c) {
 	return (b.X() - a.X()) * (c.Y() - a.Y()) - (b.Y() - a.Y()) * (c.X() - a.X());
 }
 
+/*	Compares two points using the x-coordinate first
+ */
 static bool compare(const Point& p, const Point& q) {
     if (p.X() < q.X() + 1e-12 and p.X() > q.X() - 1e-12) return p.Y() < q.Y();
     else return p.X() < q.X();
@@ -20,38 +22,42 @@ static bool compare(const Point& p, const Point& q) {
 
 /* 	Returns the convex hull as a list of points in counter-clockwise order
  *	The convex hull of the points given is computed using 
- *	Andrew's monotone chain algorithm
+ *	Andrew's monotone chain algorithm (n log n complexity)
  */
 vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 	sort(points.begin(), points.end(), compare);
 	int n = points.size();
 
-	vector<Point> lower_hull;
-	int k = 0;	// The size of the lower hull
+	// Lower hull
+	vector<Point> conv_hull(2*n);
+	int k = 0;	// The size of the hull
 	for (int i=0; i<n; ++i) {
-		while (k >= 2 and cross(lower_hull[k-2], lower_hull[k-1], points[i]) <= 0) {
-			lower_hull.pop_back(); --k;
+		while (k >= 2 and cross(conv_hull[k-2], conv_hull[k-1], points[i]) <= 0) {
+			conv_hull.pop_back(); --k;
 		}
-		lower_hull[k++] = points[i];
+		conv_hull[k++] = points[i];
 	}
 
-	vector<Point> upper_hull;
-	k = 0;	// The size of the upper hull
+	conv_hull.pop_back();	// The last point of the lower hull is the first of the upper one
+
+	// Upper hull
 	for (int i=n-1; i>=0; --i) {
-		while (k >= 2 and cross(upper_hull[k-2], upper_hull[k-1], points[i]) <= 0) {
-			upper_hull.pop_back(); --k;
+		while (k >= 2 and cross(conv_hull[k-2], conv_hull[k-1], points[i]) <= 0) {
+			conv_hull.pop_back(); --k;
 		}
-		upper_hull[k++] = points[i];
+		conv_hull[k++] = points[i];
 	}
+	
+	cerr << k << endl;
 
-	lower_hull.pop_back();	// The last point of each list is the first of the other
-	upper_hull.pop_back();
-
-	lower_hull.insert(lower_hull.end(), upper_hull.begin(), upper_hull.end());
-
-	return lower_hull;
+	conv_hull.resize(k-1);
+	return conv_hull;
 }
 
-ConvexPolygon::ConvexPolygon(vector<Point>& points) {
+ConvexPolygon::ConvexPolygon(vector<Point> points) {
 	vertices = convex_hull(points);
+}
+
+vector<Point> ConvexPolygon::return_vertices () const {
+	return vertices;
 }

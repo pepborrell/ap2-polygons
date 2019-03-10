@@ -7,7 +7,7 @@ all: polygon_calculator
 
 # Rule to clean object and executable files (make clean).
 clean:
-	rm -f main.exe *.o
+	rm -f polygon_calculator *.o
 
 
 # Rule to link the executable from then object files.
@@ -17,7 +17,7 @@ clean:
 # 		$@ is the name of the target of the rule
 # 		$(CXX) is the name of the C++ compiler
 
-polygon_calculator: polygon_calculator.o Point.o ConvexPolygon.o
+polygon_calculator: Point.o ConvexPolygon.o
 	$(CXX) $^ -o $@
 
 
