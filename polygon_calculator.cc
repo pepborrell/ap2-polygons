@@ -7,6 +7,12 @@
 
 using namespace std;
 
+void comment() {
+	cout << '#' << endl;
+	string s;
+	getline(cin, s);
+}
+
 void polygon(map<string, ConvexPolygon>& polygons) {
 	string name;
 	cin >> name;
@@ -34,10 +40,26 @@ void print(map<string, ConvexPolygon>& polygons) {
 }
 
 int main() {
+	cout.setf(ios::fixed);
+    cout.precision(3);
 	map<string, ConvexPolygon> polygons;
 	string action;
 	while (cin >> action) {
-		     if (action == "polygon")	polygon(polygons);
+			 if (action == "#")			comment();
+		else if (action == "polygon")	polygon(polygons);
 		else if (action == "print")		print(polygons);
+		else if (action == "area")		area(polygons);
+		else if (action == "perimeter")	perimeter(polygons);
+		else if (action == "vertices")	n_vertices(polygons);
+		else if (action == "centroid")	centroid(polygons);
+		else if (action == "list")		list(polygons);
+		else if (action == "save")		save(polygons);
+		else if (action == "load")		load(polygons);
+		else if (action == "setcol")	setcol(polygons);
+		else if (action == "draw")		draw(polygons);
+		else if (action == "intersection")	intersection(polygons);
+		else if (action == "union")		p_union(polygons);
+		else if (action == "inside")	inside(polygons);
+		else cout << "error: unrecognized command" << endl;
 	}
 }
