@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include "Point.hh"
 
 using namespace std;
@@ -22,7 +23,7 @@ public:
 	ConvexPolygon();
 
 	// Returns the vertices of the polygon in counter-clockwise order.
-	vector<Point> return_vertices () const;
+	vector<Point> vertices () const;
 
 	// Returns the perimeter of the polygon.
 	double perimeter () const;
@@ -56,7 +57,7 @@ public:
 private:
 
 	// Collection of the vertices of the polygon ordered counter-clockwise.
-	vector<Point> vertices;
+	vector<Point> ord_vertices;
 
 	// Colour of the polygon
 	double r, g, b;

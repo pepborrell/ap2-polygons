@@ -32,11 +32,23 @@ void print(map<string, ConvexPolygon>& polygons) {
 	string name;
 	cin >> name;
 	cout << name;
-	vector<Point> vertices = polygons[name].return_vertices();
-	for (const Point& p : vertices) {
+	vector<Point> vert = polygons[name].vertices();
+	for (const Point& p : vert) {
 		cout << "  " << p.X() << ' ' << p.Y();
 	}
 	cout << endl;
+}
+
+void area(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	cout << name << " " << polygons[name].area() << endl;
+}
+
+void perimeter(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	cout << name << " " << polygons[name].perimeter() << endl;
 }
 
 int main() {
@@ -50,16 +62,16 @@ int main() {
 		else if (action == "print")		print(polygons);
 		else if (action == "area")		area(polygons);
 		else if (action == "perimeter")	perimeter(polygons);
-		else if (action == "vertices")	n_vertices(polygons);
-		else if (action == "centroid")	centroid(polygons);
-		else if (action == "list")		list(polygons);
-		else if (action == "save")		save(polygons);
-		else if (action == "load")		load(polygons);
-		else if (action == "setcol")	setcol(polygons);
-		else if (action == "draw")		draw(polygons);
-		else if (action == "intersection")	intersection(polygons);
-		else if (action == "union")		p_union(polygons);
-		else if (action == "inside")	inside(polygons);
+		// else if (action == "vertices")	n_vertices(polygons);
+		// else if (action == "centroid")	centroid(polygons);
+		// else if (action == "list")		list(polygons);
+		// else if (action == "save")		save(polygons);
+		// else if (action == "load")		load(polygons);
+		// else if (action == "setcol")	setcol(polygons);
+		// else if (action == "draw")		draw(polygons);
+		// else if (action == "intersection")	intersection(polygons);
+		// else if (action == "union")		p_union(polygons);
+		// else if (action == "inside")	inside(polygons);
 		else cout << "error: unrecognized command" << endl;
 	}
 }
