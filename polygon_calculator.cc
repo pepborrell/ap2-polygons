@@ -57,6 +57,12 @@ void n_vertices(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].vertices().size() << endl;
 }
 
+void centroid(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	cout << polygons[name].centroid().X() << " " << polygons[name].centroid().Y() << endl;
+}
+
 int main() {
 	cout.setf(ios::fixed);
     cout.precision(3);
@@ -69,7 +75,7 @@ int main() {
 		else if (action == "area")		area(polygons);
 		else if (action == "perimeter")	perimeter(polygons);
 		else if (action == "vertices")	n_vertices(polygons);
-		// else if (action == "centroid")	centroid(polygons);
+		else if (action == "centroid")	centroid(polygons);
 		// else if (action == "list")		list(polygons);
 		// else if (action == "save")		save(polygons);
 		// else if (action == "load")		load(polygons);

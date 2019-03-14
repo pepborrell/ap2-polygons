@@ -33,9 +33,10 @@ public:
 	// Returns the area of the polygon.
 	double area () const;
 
-/**
 	// Returns the centroid of the polygon.
 	Point centroid () const;
+
+/**
 
 	// Sets the color of the polygon.
 	void set_color (double R, double G, double B);
