@@ -19,7 +19,6 @@ static bool compare(const Point& p, const Point& q) {
     else return p.X() < q.X();
 }
 
-
 /* 	Returns the convex hull as a list of points in counter-clockwise order
  *	The convex hull of the points given is computed using 
  *	Andrew's monotone chain algorithm (n log n complexity)
@@ -59,13 +58,15 @@ vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 	return conv_hull;
 }
 
+
+
+// Default constructor
+ConvexPolygon::ConvexPolygon() {}
+
 // Constructor
 ConvexPolygon::ConvexPolygon(vector<Point>& points) {
 	ord_vertices = convex_hull(points);
 }
-
-// Another constructor
-ConvexPolygon::ConvexPolygon() {}
 
 // Returns the vertices of the polygon in counter-clockwise order.
 vector<Point> ConvexPolygon::vertices () const {
@@ -89,21 +90,26 @@ double ConvexPolygon::perimeter () const {
  */
 double ConvexPolygon::area () const {
 	int n = ord_vertices.size();
-	if (n < 3) return 0;
+	if (n < 3) {
+		cerr << "n < 3 helloo" << endl;
+		return 0;
+	}
 	if (n == 3) {
 		double a = ord_vertices[0].distance(ord_vertices[1]);	// Lengths of
 		double b = ord_vertices[1].distance(ord_vertices[2]);	// the sides of
 		double c = ord_vertices[2].distance(ord_vertices[0]);	// the triangle
 		double s = 0.5*perimeter();
+		cerr << sqrt(s*(s-a)*(s-b)*(s-c)) << endl;
 		return sqrt(s*(s-a)*(s-b)*(s-c));
 	}
 	vector<Point> aux_vec = {ord_vertices[n-2], ord_vertices[n-1], ord_vertices[0]};
-	vector<Point> aux_vec2 (&ord_vertices[0], &ord_vertices[n-2]);
+	vector<Point> aux_vec2 (&ord_vertices[0], &ord_vertices[n-1]);
 	return (ConvexPolygon(aux_vec).area() + ConvexPolygon(aux_vec2).area());
 }
 
 /* YET TO BE IMPLEMENTED */
 
+/**
 // Returns the centroid of the polygon.
 Point ConvexPolygon::centroid () const {
 }
@@ -131,3 +137,4 @@ ConvexPolygon ConvexPolygon::operator+ (const ConvexPolygon& p) const {
 // Tells whether a point is inside this polygon.
 bool ConvexPolygon::is_inside (const Point& p) const {
 }
+*/

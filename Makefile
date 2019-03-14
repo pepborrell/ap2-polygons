@@ -18,7 +18,7 @@ clean:
 # 		$(CXX) is the name of the C++ compiler
 
 polygon_calculator: Point.o ConvexPolygon.o
-	$(CXX) $^ -o $@
+	$(CXX) $^ -o $@ -Wall -std=c++11 -O2
 
 
 ## Dependencies between files

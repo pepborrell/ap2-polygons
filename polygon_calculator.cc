@@ -42,13 +42,19 @@ void print(map<string, ConvexPolygon>& polygons) {
 void area(map<string, ConvexPolygon>& polygons) {
 	string name;
 	cin >> name;
-	cout << name << " " << polygons[name].area() << endl;
+	cout << polygons[name].area() << endl;
 }
 
 void perimeter(map<string, ConvexPolygon>& polygons) {
 	string name;
 	cin >> name;
-	cout << name << " " << polygons[name].perimeter() << endl;
+	cout << polygons[name].perimeter() << endl;
+}
+
+void n_vertices(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	cout << polygons[name].vertices().size() << endl;
 }
 
 int main() {
@@ -62,7 +68,7 @@ int main() {
 		else if (action == "print")		print(polygons);
 		else if (action == "area")		area(polygons);
 		else if (action == "perimeter")	perimeter(polygons);
-		// else if (action == "vertices")	n_vertices(polygons);
+		else if (action == "vertices")	n_vertices(polygons);
 		// else if (action == "centroid")	centroid(polygons);
 		// else if (action == "list")		list(polygons);
 		// else if (action == "save")		save(polygons);
@@ -72,6 +78,10 @@ int main() {
 		// else if (action == "intersection")	intersection(polygons);
 		// else if (action == "union")		p_union(polygons);
 		// else if (action == "inside")	inside(polygons);
-		else cout << "error: unrecognized command" << endl;
+		else {
+			string s;
+			getline(cin, s);
+			cout << "error: unrecognized command" << endl;
+		}
 	}
 }

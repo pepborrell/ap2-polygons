@@ -6,11 +6,13 @@
 #include <cmath>
 #include "Point.hh"
 
+#include <iostream> // Delete this and all cerr's
+
 using namespace std;
 
 /* 	This class stores a two dimensional convex polygon
-	and provides some operations that can be done with it.
-*/
+ *	and provides some operations that can be done with it.
+ */
 
 class ConvexPolygon {
 
@@ -31,6 +33,7 @@ public:
 	// Returns the area of the polygon.
 	double area () const;
 
+/**
 	// Returns the centroid of the polygon.
 	Point centroid () const;
 
@@ -52,7 +55,7 @@ public:
 	// Tells whether a point is inside this polygon.
 	bool is_inside (const Point& p) const;
 
-
+*/
 
 private:
 
