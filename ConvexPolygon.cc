@@ -58,8 +58,6 @@ vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 	return conv_hull;
 }
 
-
-
 // Default constructor
 ConvexPolygon::ConvexPolygon() {}
 
@@ -72,6 +70,10 @@ ConvexPolygon::ConvexPolygon(vector<Point>& points) {
 vector<Point> ConvexPolygon::vertices () const {
 	return ord_vertices;
 }
+
+// Removes last vertex of the vector of vertices.
+void ConvexPolygon::remove_last_vertex() ord_vertices.push_back();
+
 
 // Returns the perimeter of the polygon.
 double ConvexPolygon::perimeter () const {
@@ -99,8 +101,9 @@ double ConvexPolygon::area () const {
 		return sqrt(s*(s-a)*(s-b)*(s-c));
 	}
 	vector<Point> aux_vec = {ord_vertices[n-2], ord_vertices[n-1], ord_vertices[0]};
-	vector<Point> aux_vec2 (&ord_vertices[0], &ord_vertices[n-1]);
-	return (ConvexPolygon(aux_vec).area() + ConvexPolygon(aux_vec2).area());
+	ConvexPolygon polyg_copy = *this;
+	polyg_copy.remove_last_vertex();
+	return (ConvexPolygon(aux_vec).area() + ConvexPolygon(polyg_copy).area());
 }
 
 // Returns the centroid of the polygon.

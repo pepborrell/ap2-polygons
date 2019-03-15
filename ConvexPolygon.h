@@ -18,11 +18,11 @@ class ConvexPolygon {
 
 public:
 
+	// Default constructor
+	ConvexPolygon();
+
 	// Constructor
 	ConvexPolygon(vector<Point>& points);
-
-	// Another constructor
-	ConvexPolygon();
 
 	// Returns the vertices of the polygon in counter-clockwise order.
 	vector<Point> vertices () const;
@@ -68,6 +68,9 @@ private:
 
 	// Calculates the convex hull of a given set of points.
 	vector<Point> convex_hull(vector<Point>& points);
+	
+	// Removes last point of the vector of vertices.
+	void remove_last_vertex ();
 
 };
 
