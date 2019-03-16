@@ -36,10 +36,19 @@ public:
 	// Returns the centroid of the polygon.
 	Point centroid () const;
 
-/**
-
 	// Sets the color of the polygon.
 	void set_color (double R, double G, double B);
+
+	// Enlarges this, so it becomes a convex union of this with another polygon.
+	ConvexPolygon& operator+= (const ConvexPolygon& cpol);
+
+	// Returns the convex union of this and another polygon.
+	ConvexPolygon operator+ (const ConvexPolygon& cpol) const;
+
+	// Returns the smallest rectangle (as a polygon of 4 vertices) that contains all polygons.
+	ConvexPolygon bounding_box (const vector<ConvexPolygon>& polygons);
+
+/**
 
 	// Intersects this polygon with another one and returns this polygon.
 	ConvexPolygon& operator*= (const ConvexPolygon& p);
@@ -47,21 +56,24 @@ public:
 	// Returns the intersection of this polygon with another one.
 	ConvexPolygon operator* (const ConvexPolygon& p) const;
 
-	// Enlarges this, so it becomes a convex union of this with another polygon.
-	ConvexPolygon& operator+= (const ConvexPolygon& p);
-
-	// Returns the convex union of this and another polygon.
-	ConvexPolygon operator+ (const ConvexPolygon& p) const;
-
 	// Tells whether a point is inside this polygon.
-	bool is_inside (const Point& p) const;
+	bool p_is_inside (const Point& p) const;
+
+	// Tells whether one polygon is inside this polygon.
+	bool cp_is_inside (const ConvexPolygon& cpol) const;
+
+	// Tells whether one of the two polygons given as input is inside the other.
+	bool is_inside (const ConvexPolygon& cp1, const ConvexPolygon& cp2);
+
+	// Tells whether the polygon is regular or not.
+	bool regular () const;
 
 */
 
 private:
 
 	// Collection of the vertices of the polygon ordered counter-clockwise.
-	vector<Point> ord_vertices;
+	vector<Point> theVertices;
 
 	// Colour of the polygon
 	double r, g, b;

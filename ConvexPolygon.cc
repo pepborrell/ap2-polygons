@@ -63,26 +63,28 @@ ConvexPolygon::ConvexPolygon() {}
 
 // Constructor
 ConvexPolygon::ConvexPolygon(vector<Point>& points) {
-	ord_vertices = convex_hull(points);
+	theVertices = convex_hull(points);
 }
 
 // Returns the vertices of the polygon in counter-clockwise order.
 vector<Point> ConvexPolygon::vertices () const {
-	return ord_vertices;
+	return theVertices;
 }
 
 // Removes last vertex of the vector of vertices.
-void ConvexPolygon::remove_last_vertex() ord_vertices.push_back();
+void ConvexPolygon::remove_last_vertex() {
+	theVertices.pop_back();
+}
 
 
 // Returns the perimeter of the polygon.
 double ConvexPolygon::perimeter () const {
 	double perim = 0;
-	int n = ord_vertices.size();
+	int n = theVertices.size();
 	for (int i=0; i<n-1; ++i) {
-		perim += ord_vertices[i].distance(ord_vertices[i+1]);
+		perim += theVertices[i].distance(theVertices[i+1]);
 	}
-	perim += ord_vertices[n-1].distance(ord_vertices[0]); // The distance between the first and last vertices
+	perim += theVertices[n-1].distance(theVertices[0]); // The distance between the first and last vertices
 	return perim;
 }
 
@@ -91,16 +93,16 @@ double ConvexPolygon::perimeter () const {
  * Calculates the area of the triangles using Heron's formula.
  */
 double ConvexPolygon::area () const {
-	int n = ord_vertices.size();
+	int n = theVertices.size();
 	if (n < 3) return 0;
 	if (n == 3) {
-		double a = ord_vertices[0].distance(ord_vertices[1]);	// Lengths of
-		double b = ord_vertices[1].distance(ord_vertices[2]);	// the sides of
-		double c = ord_vertices[2].distance(ord_vertices[0]);	// the triangle
+		double a = theVertices[0].distance(theVertices[1]);	// Lengths of
+		double b = theVertices[1].distance(theVertices[2]);	// the sides of
+		double c = theVertices[2].distance(theVertices[0]);	// the triangle
 		double s = 0.5*perimeter();
 		return sqrt(s*(s-a)*(s-b)*(s-c));
 	}
-	vector<Point> aux_vec = {ord_vertices[n-2], ord_vertices[n-1], ord_vertices[0]};
+	vector<Point> aux_vec = {theVertices[n-2], theVertices[n-1], theVertices[0]};
 	ConvexPolygon polyg_copy = *this;
 	polyg_copy.remove_last_vertex();
 	return (ConvexPolygon(aux_vec).area() + ConvexPolygon(polyg_copy).area());
@@ -109,21 +111,58 @@ double ConvexPolygon::area () const {
 // Returns the centroid of the polygon.
 Point ConvexPolygon::centroid () const {
 	double sum_x = 0, sum_y = 0;
-	for (const Point& p : ord_vertices) {
+	for (const Point& p : theVertices) {
 		sum_x += p.X(); sum_y += p.Y();
 	}
-	int n = ord_vertices.size();
+	int n = theVertices.size();
 	sum_x /= n; sum_y /= n;
 	return Point(sum_x, sum_y);
 }
 
+// Sets the color of the polygon.
+void ConvexPolygon::set_color (double R, double G, double B) {
+	r = R; g = G; b = B;
+}
+
+// Enlarges this, so it becomes a convex union of this with another polygon.
+ConvexPolygon& ConvexPolygon::operator+= (const ConvexPolygon& cpol) {
+	// Concatenation of vectors of points
+	for (const Point& p : cpol.theVertices) {
+		theVertices.push_back(p);
+	}
+	theVertices = convex_hull(theVertices);
+	return *this;
+}
+
+
+// Returns the convex union of this and another polygon.
+ConvexPolygon ConvexPolygon::operator+ (const ConvexPolygon& cpol) const {
+	ConvexPolygon dpol = cpol;
+	dpol += *this;
+	return dpol;
+}
+
+// Sets and returns this as the smallest rectangle that contains all polygons.
+ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons) {
+	double x_min = polygons[0].vertices()[0].X(), x_max = x_min;
+	double y_min = polygons[0].vertices()[0].Y(), y_max = y_min;
+	for (const ConvexPolygon& cp : polygons) {
+		for (const Point& p : cp.vertices()) {
+			if (p.X() < x_min) x_min = p.X();
+			else if (p.X() > x_max) x_max = p.X();
+			if (p.X() < y_min) y_min = p.Y();
+			else if (p.X() > y_max) y_max = p.Y();
+		}
+	}
+	vector<Point> vertices_bbox = {Point(x_min, y_min), Point(x_max, y_min), Point(x_min, y_max), Point(x_max, y_max)};
+	*this = ConvexPolygon(vertices_bbox);
+	return *this;
+}
+
+
 /* YET TO BE IMPLEMENTED */
 
 /**
-// Sets the color of the polygon.
-void ConvexPolygon::set_color (double R, double G, double B) {
-}
-
 // Intersects this polygon with another one and returns this polygon.
 ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
 }
@@ -132,15 +171,13 @@ ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
 ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& p) const {
 }
 
-// Enlarges this, so it becomes a convex union of this with another polygon.
-ConvexPolygon& ConvexPolygon::operator+= (const ConvexPolygon& p) {
-}
-
-// Returns the convex union of this and another polygon.
-ConvexPolygon ConvexPolygon::operator+ (const ConvexPolygon& p) const {
-}
-
 // Tells whether a point is inside this polygon.
-bool ConvexPolygon::is_inside (const Point& p) const {
+bool ConvexPolygon::p_is_inside (const Point& p) const {
 }
+
+// Tells whether one polygon is inside this polygon.
+bool cp_is_inside (const ConvexPolygon& cpol) const;
+
+// Tells whether one of the two polygons given as input is inside the other.
+bool is_inside (const ConvexPolygon& cp1, const ConvexPolygon& cp2);
 */

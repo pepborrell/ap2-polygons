@@ -63,6 +63,21 @@ void centroid(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].centroid().X() << " " << polygons[name].centroid().Y() << endl;
 }
 
+void bbox(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	// Building a vector of all polygons.
+	vector<ConvexPolygon> cpols;
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string pol_name;
+	while(iss >> pol_name) {
+		cpols.push_back(polygons[pol_name]);
+	}
+	polygons[name].bounding_box(cpols);
+}
+
 int main() {
 	cout.setf(ios::fixed);
     cout.precision(3);
@@ -84,6 +99,7 @@ int main() {
 		// else if (action == "intersection")	intersection(polygons);
 		// else if (action == "union")		p_union(polygons);
 		// else if (action == "inside")	inside(polygons);
+		else if (action == "bbox") bbox(polygons);
 		else {
 			string s;
 			getline(cin, s);
