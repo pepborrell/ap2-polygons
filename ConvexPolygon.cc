@@ -159,6 +159,23 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 	return *this;
 }
 
+static bool ray_crosses (const Point& p, const Point& a, const Point& b) {
+	if (p.X() < min(a.X(), b.X()) or p.Y() < min(a.Y(), b.Y()) or p.Y() > max(a.Y(), b.Y())) return false;
+	// if (p.Y() > a.Y() - 1e-12 and p.Y() < a.Y() + 1e-12) return (p.X() > a.X());
+	double lx = ((b.X() - a.X())/(b.Y() - a.Y()))*(p.Y() - a.Y()) + a.X();
+	return (lx <= p.X());
+}
+
+// Tells whether a point is inside this polygon.
+bool ConvexPolygon::p_is_inside (const Point& p) const {
+	int n = vertices().size();
+	int count = 0;
+	for (int i=0; i<n; ++i) {
+		if (ray_crosses(p, vertices()[i], vertices()[(i+1)%n])) ++count;
+	}
+	return count%2;
+}
+
 
 /* YET TO BE IMPLEMENTED */
 
@@ -169,10 +186,6 @@ ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
 
 // Returns the intersection of this polygon with another one.
 ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& p) const {
-}
-
-// Tells whether a point is inside this polygon.
-bool ConvexPolygon::p_is_inside (const Point& p) const {
 }
 
 // Tells whether one polygon is inside this polygon.

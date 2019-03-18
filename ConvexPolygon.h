@@ -48,6 +48,10 @@ public:
 	// Returns the smallest rectangle (as a polygon of 4 vertices) that contains all polygons.
 	ConvexPolygon bounding_box (const vector<ConvexPolygon>& polygons);
 
+	// Tells whether a point is inside this polygon.
+	bool p_is_inside (const Point& p) const;
+
+
 /**
 
 	// Intersects this polygon with another one and returns this polygon.
@@ -55,9 +59,6 @@ public:
 
 	// Returns the intersection of this polygon with another one.
 	ConvexPolygon operator* (const ConvexPolygon& p) const;
-
-	// Tells whether a point is inside this polygon.
-	bool p_is_inside (const Point& p) const;
 
 	// Tells whether one polygon is inside this polygon.
 	bool cp_is_inside (const ConvexPolygon& cpol) const;

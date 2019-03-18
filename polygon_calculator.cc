@@ -78,6 +78,14 @@ void bbox(map<string, ConvexPolygon>& polygons) {
 	polygons[name].bounding_box(cpols);
 }
 
+void pinside(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	double x, y;
+	cin >> x >> y;
+	cout << polygons[name].p_is_inside(Point(x,y)) << endl;
+}
+
 int main() {
 	cout.setf(ios::fixed);
     cout.precision(3);
@@ -100,6 +108,7 @@ int main() {
 		// else if (action == "union")		p_union(polygons);
 		// else if (action == "inside")	inside(polygons);
 		else if (action == "bbox") bbox(polygons);
+		else if (action == "pinside") pinside(polygons);
 		else {
 			string s;
 			getline(cin, s);
