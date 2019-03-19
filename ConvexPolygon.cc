@@ -6,7 +6,10 @@ using namespace std;
 
 /*	Computes the 2D cross product of ab and ac vectors (z component).
  *	Returns a positive value if abc makes a counter-clockwise turn
- *	Returns a negative value if abc makes a clockwise turn
+ *	Returns a negative value if abc makes a clockwise turn.
+ *	| i   j   k   |
+ *	| abx aby abz |
+ *	| acx acy acz |
  */
 static double cross_p(const Point& a, const Point& b, const Point& c) {
 	return (b.X() - a.X()) * (c.Y() - a.Y()) - (b.Y() - a.Y()) * (c.X() - a.X());
@@ -159,6 +162,7 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 	return *this;
 }
 
+/*
 static bool ray_crosses (const Point& p, const Point& a, const Point& b) {
 	if (p.X() < min(a.X(), b.X()) or p.Y() < min(a.Y(), b.Y()) or p.Y() > max(a.Y(), b.Y())) return false;
 	// if (p.Y() > a.Y() - 1e-12 and p.Y() < a.Y() + 1e-12) return (p.X() > a.X());
@@ -175,6 +179,37 @@ bool ConvexPolygon::p_is_inside (const Point& p) const {
 	}
 	return count%2;
 }
+*/
+
+// Tells whether a point is inside a triangle by checking if all
+// vertex-vertex-point turns are counter-clockwise
+bool ConvexPolygon::p_inside_triangle(const Point& p) const {
+	bool turn_a = cross_p(vertices()[0], vertices()[1], p) >= 0;
+	bool turn_b = cross_p(vertices()[1], vertices()[2], p) >= 0;
+	bool turn_c = cross_p(vertices()[2], vertices()[0], p) >= 0;
+	return turn_a and turn_b and turn_c;
+}
+
+// Tells whether a point is inside this polygon.
+bool ConvexPolygon::p_is_inside (const Point& p) const {
+	int n = vertices().size();
+	if (n < 3) return false;
+	if (n == 3) return p_inside_triangle(p);
+	else {
+		vector<Point> v_aux_tri = {theVertices[n-2], theVertices[n-1], theVertices[0]};
+		ConvexPolygon aux_tri(v_aux_tri);
+		ConvexPolygon polyg_copy = *this;
+		polyg_copy.remove_last_vertex();
+		return aux_tri.p_inside_triangle(p) or polyg_copy.p_is_inside(p);
+	}
+}
+
+// Tells whether this polygon is inside a polygon.
+bool ConvexPolygon::is_inside (const ConvexPolygon& cpol) const {
+	bool inside = true;
+	for (const Point& p : vertices()) if (not cpol.p_is_inside(p)) inside = false;
+	return inside;
+}
 
 
 /* YET TO BE IMPLEMENTED */
@@ -187,10 +222,4 @@ ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
 // Returns the intersection of this polygon with another one.
 ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& p) const {
 }
-
-// Tells whether one polygon is inside this polygon.
-bool cp_is_inside (const ConvexPolygon& cpol) const;
-
-// Tells whether one of the two polygons given as input is inside the other.
-bool is_inside (const ConvexPolygon& cp1, const ConvexPolygon& cp2);
 */

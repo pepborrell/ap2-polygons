@@ -51,6 +51,8 @@ public:
 	// Tells whether a point is inside this polygon.
 	bool p_is_inside (const Point& p) const;
 
+	// Tells whether this polygon is inside a polygon.
+	bool is_inside (const ConvexPolygon& cpol) const;
 
 /**
 
@@ -59,12 +61,6 @@ public:
 
 	// Returns the intersection of this polygon with another one.
 	ConvexPolygon operator* (const ConvexPolygon& p) const;
-
-	// Tells whether one polygon is inside this polygon.
-	bool cp_is_inside (const ConvexPolygon& cpol) const;
-
-	// Tells whether one of the two polygons given as input is inside the other.
-	bool is_inside (const ConvexPolygon& cp1, const ConvexPolygon& cp2);
 
 	// Tells whether the polygon is regular or not.
 	bool regular () const;
@@ -84,6 +80,10 @@ private:
 	
 	// Removes last point of the vector of vertices.
 	void remove_last_vertex ();
+	
+	// Tells whether a point is inside a triangle by checking if all
+	// vertex-vertex-point turns are counter-clockwise
+	bool p_inside_triangle (const Point& p) const;
 
 };
 
