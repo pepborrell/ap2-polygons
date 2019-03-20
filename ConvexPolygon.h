@@ -60,7 +60,7 @@ public:
 	bool is_inside (const ConvexPolygon& cpol) const;
 
 	// Draws the list of polygons given as input.
-	void draw (const vector<ConvexPolygon>& lpol);
+	void draw (const char* img_name, const vector<ConvexPolygon>& lpol);
 
 /**
 

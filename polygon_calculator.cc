@@ -92,6 +92,29 @@ void pinside(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].p_is_inside(Point(x,y)) << endl;
 }
 
+void setcol(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	double r, g, b;
+	cin >> r >> g >> b;
+	polygons[name].set_color(r, g, b);
+}
+
+void draw(map<string, ConvexPolygon>& polygons) {
+	string img_name;
+	cin >> img_name;
+	//img_name = '"' + img_name + '"';
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	vector<ConvexPolygon> pols;
+	string name;
+	while (iss >> name) {
+		pols.push_back(polygons[name]);
+	}
+	polygons[name].draw(img_name.c_str(), pols);
+}
+
 int main() {
 	cout.setf(ios::fixed);
     cout.precision(3);
@@ -108,8 +131,8 @@ int main() {
 		// else if (action == "list")		list(polygons);
 		// else if (action == "save")		save(polygons);
 		// else if (action == "load")		load(polygons);
-		// else if (action == "setcol")	setcol(polygons);
-		// else if (action == "draw")		draw(polygons);
+		else if (action == "setcol")	setcol(polygons);
+		else if (action == "draw")		draw(polygons);
 		// else if (action == "intersection")	intersection(polygons);
 		// else if (action == "union")		p_union(polygons);
 		else if (action == "inside")	inside(polygons);

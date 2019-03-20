@@ -7,7 +7,7 @@ all: polygon_calculator
 
 # Rule to clean object and executable files (make clean).
 clean:
-	rm -f polygon_calculator *.o
+	rm -f polygon_calculator *.o *.png
 
 
 # Rule to link the executable from then object files.

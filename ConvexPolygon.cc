@@ -232,19 +232,21 @@ bool ConvexPolygon::is_inside (const ConvexPolygon& cpol) const {
 }
 
 // Draws the list of polygons given as input.
-void ConvexPolygon::draw (const vector<ConvexPolygon>& lpol) {
+void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpol) {
 	Point LL, UR;
-	ConvexPolygon box = bbox(lpol, LL, UR);
+	ConvexPolygon box = bounding_box(lpol, LL, UR);
 	const int size = 500;
 	int scale = min((size-2)/(UR.Y()-LL.Y()), (size-2)/(UR.X()-LL.X()));
-	pngwriter png(size, size, 1.0, "image.png");
+	pngwriter png(size, size, 1.0, img_name);
 	for (const ConvexPolygon& pol : lpol) {
-		int n = pol.vertices().size();
-		int points[], i=0;
-		for (const Point& p : pol) {
-			points[i++] = p.X();
-			points[i++] = p.Y();
+		int n = pol.vertices().size(); ++n;
+		int points[2*n], i=0;
+		for (const Point& p : pol.vertices()) {
+			points[i++] = scale*(p.X() - LL.X()) + 1;
+			points[i++] = scale*(p.Y() - LL.X()) + 1;
 		}
+		points[i++] = scale*(pol.vertices()[0].X() - LL.X()) + 1;
+		points[i++] = scale*(pol.vertices()[0].Y() - LL.X()) + 1;
 		png.polygon(points, n, pol.r, pol.g, pol.b);
 	}
 	png.close();
