@@ -162,6 +162,26 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 	return *this;
 }
 
+// Sets and returns this as the smallest rectangle that contains all polygons. ALso changes the coordinates
+// of the lower lefts and upper right.
+ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons, Point& LL, Point& UR) {
+	double x_min = polygons[0].vertices()[0].X(), x_max = x_min;
+	double y_min = polygons[0].vertices()[0].Y(), y_max = y_min;
+	for (const ConvexPolygon& cp : polygons) {
+		for (const Point& p : cp.vertices()) {
+			if (p.X() < x_min) x_min = p.X();
+			else if (p.X() > x_max) x_max = p.X();
+			if (p.X() < y_min) y_min = p.Y();
+			else if (p.X() > y_max) y_max = p.Y();
+		}
+	}
+	LL = Point(x_min, y_min);
+	UR = Point(x_max, y_max);
+	vector<Point> vertices_bbox = {Point(x_min, y_min), Point(x_max, y_min), Point(x_min, y_max), Point(x_max, y_max)};
+	*this = ConvexPolygon(vertices_bbox);
+	return *this;
+}
+
 /*
 static bool ray_crosses (const Point& p, const Point& a, const Point& b) {
 	if (p.X() < min(a.X(), b.X()) or p.Y() < min(a.Y(), b.Y()) or p.Y() > max(a.Y(), b.Y())) return false;
@@ -209,6 +229,25 @@ bool ConvexPolygon::is_inside (const ConvexPolygon& cpol) const {
 	bool inside = true;
 	for (const Point& p : vertices()) if (not cpol.p_is_inside(p)) inside = false;
 	return inside;
+}
+
+// Draws the list of polygons given as input.
+void ConvexPolygon::draw (const vector<ConvexPolygon>& lpol) {
+	Point LL, UR;
+	ConvexPolygon box = bbox(lpol, LL, UR);
+	const int size = 500;
+	int scale = min((size-2)/(UR.Y()-LL.Y()), (size-2)/(UR.X()-LL.X()));
+	pngwriter png(size, size, 1.0, "image.png");
+	for (const ConvexPolygon& pol : lpol) {
+		int n = pol.vertices().size();
+		int points[], i=0;
+		for (const Point& p : pol) {
+			points[i++] = p.X();
+			points[i++] = p.Y();
+		}
+		png.polygon(points, n, pol.r, pol.g, pol.b);
+	}
+	png.close();
 }
 
 

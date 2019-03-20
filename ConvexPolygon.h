@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <pngwriter.h>
 #include "Point.hh"
 
 #include <iostream> // Delete this and all cerr's
@@ -48,11 +49,18 @@ public:
 	// Returns the smallest rectangle (as a polygon of 4 vertices) that contains all polygons.
 	ConvexPolygon bounding_box (const vector<ConvexPolygon>& polygons);
 
+	// Sets and returns this as the smallest rectangle that contains all polygons. It also changes the coordinates
+	// of the lower lefts and upper right.
+	ConvexPolygon bounding_box (const vector<ConvexPolygon>& polygons, Point& LL, Point& UR); 
+
 	// Tells whether a point is inside this polygon.
 	bool p_is_inside (const Point& p) const;
 
 	// Tells whether this polygon is inside a polygon.
 	bool is_inside (const ConvexPolygon& cpol) const;
+
+	// Draws the list of polygons given as input.
+	void draw (const vector<ConvexPolygon>& lpol);
 
 /**
 
