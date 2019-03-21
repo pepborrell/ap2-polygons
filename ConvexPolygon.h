@@ -25,6 +25,9 @@ public:
 	// Constructor
 	ConvexPolygon(vector<Point>& points);
 
+	// Constructor
+	ConvexPolygon(vector<Point>& points, bool points_sorted);
+
 	// Returns the vertices of the polygon in counter-clockwise order.
 	vector<Point> vertices () const;
 

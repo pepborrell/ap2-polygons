@@ -77,33 +77,42 @@ void centroid(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].centroid().X() << " " << polygons[name].centroid().Y() << endl;
 }
 
-void bbox(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	// Building a vector of all polygons.
-	vector<ConvexPolygon> cpols;
+void list(const map<string, ConvexPolygon>& polygons) {
+	for (const auto& elem : polygons) {
+		cout << elem.first << endl;
+	}
+}
+
+void save(map<string, ConvexPolygon>& polygons) {
+	string filename;
+	cin >> filename;
 	string s;
 	getline(cin, s);
 	istringstream iss(s);
-	string pol_name;
-	while(iss >> pol_name) {
-		cpols.push_back(polygons[pol_name]);
-	}
-	polygons[name].bounding_box(cpols);
-}
-
-void inside(map<string, ConvexPolygon>& polygons) {
-	string name1, name2;
-	cin >> name1 >> name2;
-	cout << polygons[name1].is_inside(polygons[name2]) << endl;
-}
-
-void pinside(map<string, ConvexPolygon>& polygons) {
 	string name;
-	cin >> name;
-	double x, y;
-	cin >> x >> y;
-	cout << polygons[name].p_is_inside(Point(x,y)) << endl;
+	ofstream f(filename);
+	while (iss >> name) {
+		f << vert_output(name, polygons[name]);
+	}
+	f.close();
+}
+
+void load(map<string, ConvexPolygon>& polygons) {
+	string filename;
+	cin >> filename;
+	ifstream f(filename);
+	string gl;
+	while (getline(f, gl)) {
+		istringstream iss(gl);
+		string name;
+		iss >> name;
+		vector<Point> points;
+		string sx, sy;
+		while (iss >> sx >> sy) {
+			points.push_back(Point(stod(sx), stod(sy)));
+		}
+		polygons[name] = ConvexPolygon(points, true);
+	}
 }
 
 void setcol(map<string, ConvexPolygon>& polygons) {
@@ -128,18 +137,35 @@ void draw(map<string, ConvexPolygon>& polygons) {
 	polygons[name].draw(img_name.c_str(), pols);
 }
 
-void save(map<string, ConvexPolygon>& polygons) {
-	string filename;
-	cin >> filename;
+void p_union(map<string, ConvexPolygon>& polygons) {
+	string result_name;
+	cin >> result_name;
 	string s;
 	getline(cin, s);
 	istringstream iss(s);
+	string pol;
+	while(iss >> pol) polygons[result_name] += polygons[pol];
+}
+
+void inside(map<string, ConvexPolygon>& polygons) {
+	string name1, name2;
+	cin >> name1 >> name2;
+	cout << polygons[name1].is_inside(polygons[name2]) << endl;
+}
+
+void bbox(map<string, ConvexPolygon>& polygons) {
 	string name;
-	ofstream f(filename);
-	while (iss >> name) {
-		f << vert_output(name, polygons[name]);
+	cin >> name;
+	// Building a vector of all polygons.
+	vector<ConvexPolygon> cpols;
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string pol_name;
+	while(iss >> pol_name) {
+		cpols.push_back(polygons[pol_name]);
 	}
-	f.close();
+	polygons[name].bounding_box(cpols);
 }
 
 int main() {
@@ -155,16 +181,15 @@ int main() {
 		else if (action == "perimeter")	perimeter(polygons);
 		else if (action == "vertices")	n_vertices(polygons);
 		else if (action == "centroid")	centroid(polygons);
-		// else if (action == "list")		list(polygons);
+		else if (action == "list")		list(polygons);
 		else if (action == "save")		save(polygons);
-		// else if (action == "load")		load(polygons);
+		else if (action == "load")		load(polygons);
 		else if (action == "setcol")	setcol(polygons);
 		else if (action == "draw")		draw(polygons);
 		// else if (action == "intersection")	intersection(polygons);
-		// else if (action == "union")		p_union(polygons);
+		else if (action == "union")		p_union(polygons);
 		else if (action == "inside")	inside(polygons);
 		else if (action == "bbox") bbox(polygons);
-		else if (action == "pinside") pinside(polygons);
 		else {
 			string s;
 			getline(cin, s);

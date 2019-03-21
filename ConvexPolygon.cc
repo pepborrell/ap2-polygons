@@ -69,6 +69,12 @@ ConvexPolygon::ConvexPolygon(vector<Point>& points) {
 	theVertices = convex_hull(points);
 }
 
+// Constructor
+ConvexPolygon::ConvexPolygon(vector<Point>& points, bool points_sorted) {
+	if (not points_sorted) theVertices = convex_hull(points);
+	else theVertices = points;
+}
+
 // Returns the vertices of the polygon in counter-clockwise order.
 vector<Point> ConvexPolygon::vertices () const {
 	return theVertices;
