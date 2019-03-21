@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <fstream>
 
 #include "ConvexPolygon.h"
 
@@ -37,6 +38,19 @@ void print(map<string, ConvexPolygon>& polygons) {
 		cout << "  " << p.X() << ' ' << p.Y();
 	}
 	cout << endl;
+}
+
+string vert_output(const string& name, const ConvexPolygon& polyg) {
+	ostringstream oss;
+	oss.setf(ios::fixed);
+    oss.precision(3);
+	oss << name;
+	vector<Point> vert = polyg.vertices();
+	for (const Point& p : vert) {
+		oss << "  " << p.X() << ' ' << p.Y();
+	}
+	oss << endl;
+	return oss.str();
 }
 
 void area(map<string, ConvexPolygon>& polygons) {
@@ -103,7 +117,6 @@ void setcol(map<string, ConvexPolygon>& polygons) {
 void draw(map<string, ConvexPolygon>& polygons) {
 	string img_name;
 	cin >> img_name;
-	//img_name = '"' + img_name + '"';
 	string s;
 	getline(cin, s);
 	istringstream iss(s);
@@ -113,6 +126,20 @@ void draw(map<string, ConvexPolygon>& polygons) {
 		pols.push_back(polygons[name]);
 	}
 	polygons[name].draw(img_name.c_str(), pols);
+}
+
+void save(map<string, ConvexPolygon>& polygons) {
+	string filename;
+	cin >> filename;
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name;
+	ofstream f(filename);
+	while (iss >> name) {
+		f << vert_output(name, polygons[name]);
+	}
+	f.close();
 }
 
 int main() {
@@ -129,7 +156,7 @@ int main() {
 		else if (action == "vertices")	n_vertices(polygons);
 		else if (action == "centroid")	centroid(polygons);
 		// else if (action == "list")		list(polygons);
-		// else if (action == "save")		save(polygons);
+		else if (action == "save")		save(polygons);
 		// else if (action == "load")		load(polygons);
 		else if (action == "setcol")	setcol(polygons);
 		else if (action == "draw")		draw(polygons);

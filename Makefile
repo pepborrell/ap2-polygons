@@ -7,7 +7,7 @@ all: polygon_calculator
 
 # Rule to clean object and executable files (make clean).
 clean:
-	rm -f polygon_calculator *.o *.png
+	rm -f polygon_calculator *.o *.png *.txt
 
 
 # Rule to link the executable from then object files.
@@ -17,14 +17,14 @@ clean:
 # 		$@ is the name of the target of the rule
 # 		$(CXX) is the name of the C++ compiler
 
-polygon_calculator: Point.o ConvexPolygon.o
+polygon_calculator: Point.o ConvexPolygon.o polygon_calculator.o
 	$(CXX) $^ -L $(HOME)/libs/lib -l PNGwriter -l png -o $@ -DNO_FREETYPE -I $(HOME)/libs/include 
 
 
 ## Dependencies between files
 # (we don't need to precise how to produce them, Makefile already knows)
 
-polygon_calculator: polygon_calculator.cc ConvexPolygon.h
+polygon_calculator.o: polygon_calculator.cc Point.hh ConvexPolygon.h
 
 Point.o: Point.cc Point.hh
 
