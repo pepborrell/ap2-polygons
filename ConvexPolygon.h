@@ -96,6 +96,9 @@ private:
 	// vertex-vertex-point turns are counter-clockwise
 	bool p_inside_triangle (const Point& p) const;
 
+	// Returns the points of a polygon that are inside of this polygon.
+	vector<Point> points_inside (const ConvexPolygon& cpol) const;
+
 };
 
 #endif

@@ -188,25 +188,6 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 	return *this;
 }
 
-/*
-static bool ray_crosses (const Point& p, const Point& a, const Point& b) {
-	if (p.X() < min(a.X(), b.X()) or p.Y() < min(a.Y(), b.Y()) or p.Y() > max(a.Y(), b.Y())) return false;
-	// if (p.Y() > a.Y() - 1e-12 and p.Y() < a.Y() + 1e-12) return (p.X() > a.X());
-	double lx = ((b.X() - a.X())/(b.Y() - a.Y()))*(p.Y() - a.Y()) + a.X();
-	return (lx <= p.X());
-}
-
-// Tells whether a point is inside this polygon.
-bool ConvexPolygon::p_is_inside (const Point& p) const {
-	int n = vertices().size();
-	int count = 0;
-	for (int i=0; i<n; ++i) {
-		if (ray_crosses(p, vertices()[i], vertices()[(i+1)%n])) ++count;
-	}
-	return count%2;
-}
-*/
-
 // Tells whether a point is inside a triangle by checking if all
 // vertex-vertex-point turns are counter-clockwise
 bool ConvexPolygon::p_inside_triangle(const Point& p) const {
@@ -258,13 +239,46 @@ void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpo
 	png.close();
 }
 
+static Point intersection_segments (const Point& r1, const Point& r2, const Point& s1, const Point& s2) {
+	// Finding the two lines that lay on the points
+	double rA = r2.Y() - r1.Y();
+	double rB = r1.X() - r2.X();
+	double rC = rA*r1.X() + rB*r1.Y();
+
+	double sA = s2.Y() - s1.Y();
+	double sB = s1.X() - s2.X();
+	double sC = sA*s1.X() + sB*s1.Y();
+
+	// Solving the system using Cramer's rule
+	double det = rA*sB - rB*sA;
+	if (abs(det) < 1e-12) return ; // Parallel lines
+	else {
+		double x = (sB*rC - rB*sC)/det;
+		double y = (rA*sC - sA*rC)/det;
+	}
+	Point intersection(x, y);
+	if (bounding_box({r1, r2, s1, s2}).p_is_inside(intersection)) return intersection;
+	else return;
+}
+
+
+// Returns the points of a polygon that are inside of this polygon.
+vector<Point> ConvexPolygon::points_inside (const ConvexPolygon& cpol) const {
+	vector<Point> v;
+	for (const Point& p : cpol.vertices()) {
+		if (p_is_inside(p)) v.push_back(p);
+	}
+	return v;
+}
+
+// Intersects this polygon with another one and returns this polygon.
+ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
+}
+
 
 /* YET TO BE IMPLEMENTED */
 
 /**
-// Intersects this polygon with another one and returns this polygon.
-ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
-}
 
 // Returns the intersection of this polygon with another one.
 ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& p) const {
