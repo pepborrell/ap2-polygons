@@ -168,6 +168,21 @@ void bbox(map<string, ConvexPolygon>& polygons) {
 	polygons[name].bounding_box(cpols);
 }
 
+void intersection(map<string, ConvexPolygon>& polygons) {
+	string name1;
+	cin >> name1;
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	vector<string> names;
+	int i = 0;
+	while (iss >> s) {
+		names.push_back(s); ++i;
+	}
+	if (i == 1) polygons[name1] *= polygons[names[0]];
+	else polygons[name1] = polygons[names[0]] * polygons[names[1]];
+}
+
 int main() {
 	cout.setf(ios::fixed);
     cout.precision(3);
@@ -186,7 +201,7 @@ int main() {
 		else if (action == "load")		load(polygons);
 		else if (action == "setcol")	setcol(polygons);
 		else if (action == "draw")		draw(polygons);
-		// else if (action == "intersection")	intersection(polygons);
+		else if (action == "intersection")	intersection(polygons);
 		else if (action == "union")		p_union(polygons);
 		else if (action == "inside")	inside(polygons);
 		else if (action == "bbox") bbox(polygons);

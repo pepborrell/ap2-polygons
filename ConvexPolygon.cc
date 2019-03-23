@@ -239,7 +239,8 @@ void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpo
 	png.close();
 }
 
-static Point intersection_segments (const Point& r1, const Point& r2, const Point& s1, const Point& s2) {
+// Returns true if an intersection was found and, if true, places its value in the intersection input-output variable.
+static bool intersection_segments (const Point& r1, const Point& r2, const Point& s1, const Point& s2, Point& intersection) {
 	// Finding the two lines that lay on the points
 	double rA = r2.Y() - r1.Y();
 	double rB = r1.X() - r2.X();
@@ -251,19 +252,21 @@ static Point intersection_segments (const Point& r1, const Point& r2, const Poin
 
 	// Solving the system using Cramer's rule
 	double det = rA*sB - rB*sA;
-	if (abs(det) < 1e-12) return ; // Parallel lines
+	if (abs(det) < 1e-12) return false; // Parallel lines
 	else {
 		double x = (sB*rC - rB*sC)/det;
 		double y = (rA*sC - sA*rC)/det;
+		intersection = Point{x, y};
 	}
-	Point intersection(x, y);
-	if (bounding_box({r1, r2, s1, s2}).p_is_inside(intersection)) return intersection;
-	else return;
+	vector<Point> bbox_vert = {r1, r2, s1, s2};
+	ConvexPolygon bbox(bbox_vert);
+	if (bbox.p_is_inside(intersection)) return true;
+	else return false;
 }
 
 
 // Returns the points of a polygon that are inside of this polygon.
-vector<Point> ConvexPolygon::points_inside (const ConvexPolygon& cpol) const {
+vector<Point> ConvexPolygon::list_points_inside (const ConvexPolygon& cpol) const {
 	vector<Point> v;
 	for (const Point& p : cpol.vertices()) {
 		if (p_is_inside(p)) v.push_back(p);
@@ -272,15 +275,39 @@ vector<Point> ConvexPolygon::points_inside (const ConvexPolygon& cpol) const {
 }
 
 // Intersects this polygon with another one and returns this polygon.
-ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& p) {
+ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& cpol) {
+	vector<Point> intersection_vertices;
+
+	// Finding the vertices that lay inside both polygons.
+	vector<Point> pts_inside = cpol.list_points_inside(*this);
+	intersection_vertices.insert(intersection_vertices.end(), pts_inside.begin(), pts_inside.end());
+	pts_inside = list_points_inside(cpol);
+	intersection_vertices.insert(intersection_vertices.end(), pts_inside.begin(), pts_inside.end());
+
+	// Checking all intersections of sides of the polygons.
+	int n = vertices().size(), m = cpol.vertices().size();
+	for (int i=0, ii=vertices().size()-1; i<n; ii=i++) {
+		for (int j=0, jj=vertices().size()-1; j<m; jj=j++) {
+			Point intersection;
+			if (intersection_segments(vertices()[ii], vertices()[i], cpol.vertices()[jj], cpol.vertices()[j], intersection)) {
+				intersection_vertices.push_back(intersection);
+				cerr << intersection.X() << " " << intersection.Y() << endl;
+			}
+		}
+	}
+	theVertices = ConvexPolygon(intersection_vertices).vertices();
+	return *this;
+}
+
+// Returns the intersection of this polygon with another one.
+ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& cpol) const {
+	ConvexPolygon dpol = cpol;
+	dpol *= *this;
+	return dpol;
 }
 
 
 /* YET TO BE IMPLEMENTED */
 
 /**
-
-// Returns the intersection of this polygon with another one.
-ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& p) const {
-}
 */
