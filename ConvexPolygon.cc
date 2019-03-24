@@ -159,8 +159,8 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 		for (const Point& p : cp.vertices()) {
 			if (p.X() < x_min) x_min = p.X();
 			else if (p.X() > x_max) x_max = p.X();
-			if (p.X() < y_min) y_min = p.Y();
-			else if (p.X() > y_max) y_max = p.Y();
+			if (p.Y() < y_min) y_min = p.Y();
+			else if (p.Y() > y_max) y_max = p.Y();
 		}
 	}
 	vector<Point> vertices_bbox = {Point(x_min, y_min), Point(x_max, y_min), Point(x_min, y_max), Point(x_max, y_max)};
@@ -177,8 +177,8 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 		for (const Point& p : cp.vertices()) {
 			if (p.X() < x_min) x_min = p.X();
 			else if (p.X() > x_max) x_max = p.X();
-			if (p.X() < y_min) y_min = p.Y();
-			else if (p.X() > y_max) y_max = p.Y();
+			if (p.Y() < y_min) y_min = p.Y();
+			else if (p.Y() > y_max) y_max = p.Y();
 		}
 	}
 	LL = Point(x_min, y_min);
@@ -219,21 +219,22 @@ bool ConvexPolygon::is_inside (const ConvexPolygon& cpol) const {
 }
 
 // Draws the list of polygons given as input.
-void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpol) {
+void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpol) const {
 	Point LL, UR;
-	ConvexPolygon box = bounding_box(lpol, LL, UR);
+	ConvexPolygon box;
+	box.bounding_box(lpol, LL, UR);
 	const int size = 500;
-	int scale = min((size-2)/(UR.Y()-LL.Y()), (size-2)/(UR.X()-LL.X()));
+	int scale = min(((size-4))/(UR.Y()-LL.Y()), ((size-4))/(UR.X()-LL.X()));
 	pngwriter png(size, size, 1.0, img_name);
 	for (const ConvexPolygon& pol : lpol) {
 		int n = pol.vertices().size(); ++n;
 		int points[2*n], i=0;
 		for (const Point& p : pol.vertices()) {
-			points[i++] = scale*(p.X() - LL.X()) + 1;
-			points[i++] = scale*(p.Y() - LL.X()) + 1;
+			points[i++] = scale*(p.X() - LL.X()) + 2;
+			points[i++] = scale*(p.Y() - LL.Y()) + 2;
 		}
-		points[i++] = scale*(pol.vertices()[0].X() - LL.X()) + 1;
-		points[i++] = scale*(pol.vertices()[0].Y() - LL.X()) + 1;
+		points[i++] = scale*(pol.vertices()[0].X() - LL.X()) + 2;
+		points[i++] = scale*(pol.vertices()[0].Y() - LL.Y()) + 2;
 		png.polygon(points, n, pol.r, pol.g, pol.b);
 	}
 	png.close();
@@ -253,17 +254,16 @@ static bool intersection_segments (const Point& r1, const Point& r2, const Point
 	// Solving the system using Cramer's rule
 	double det = rA*sB - rB*sA;
 	if (abs(det) < 1e-12) return false; // Parallel lines
-	else {
-		double x = (sB*rC - rB*sC)/det;
-		double y = (rA*sC - sA*rC)/det;
-		intersection = Point{x, y};
-	}
+
+	double x = (sB*rC - rB*sC)/det;
+	double y = (rA*sC - sA*rC)/det;
+	intersection = Point{x, y};
+
 	vector<Point> bbox_vert = {r1, r2, s1, s2};
 	ConvexPolygon bbox(bbox_vert);
 	if (bbox.p_is_inside(intersection)) return true;
-	else return false;
+	return false;
 }
-
 
 // Returns the points of a polygon that are inside of this polygon.
 vector<Point> ConvexPolygon::list_points_inside (const ConvexPolygon& cpol) const {
@@ -286,12 +286,11 @@ ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& cpol) {
 
 	// Checking all intersections of sides of the polygons.
 	int n = vertices().size(), m = cpol.vertices().size();
-	for (int i=0, ii=vertices().size()-1; i<n; ii=i++) {
-		for (int j=0, jj=vertices().size()-1; j<m; jj=j++) {
+	for (int i=0, ii=n-1; i<n; ii=i++) {
+		for (int j=0, jj=m-1; j<m; jj=j++) {
 			Point intersection;
 			if (intersection_segments(vertices()[ii], vertices()[i], cpol.vertices()[jj], cpol.vertices()[j], intersection)) {
 				intersection_vertices.push_back(intersection);
-				cerr << intersection.X() << " " << intersection.Y() << endl;
 			}
 		}
 	}
@@ -306,8 +305,20 @@ ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& cpol) const {
 	return dpol;
 }
 
+// Tells whether the polygon is regular or not.
+bool ConvexPolygon::is_regular () const {
+	// Checking for all sides
+	int n = vertices().size();
+	double dist = vertices()[n-1].distance(vertices()[0]);
+	for (int i=1, ii=0; i<n; ii=i++) {
+		if (abs(dist - vertices()[ii].distance(vertices()[i])) > 1e-12) return false;
+	}
 
-/* YET TO BE IMPLEMENTED */
+	// Checking for all angles (using the cross product, given that we know that all sides are equal)
+	double cross = cross_p(vertices()[n-2], vertices()[n-1], vertices()[0]);
+	for (int i=1, ii = 0, iii = n-1; i<n; iii=ii, ii=i++) {
+		if (abs(cross - cross_p(vertices()[iii], vertices()[ii], vertices()[i])) > 1e-12) return false;
+	}
+	return true;
+}
 
-/**
-*/

@@ -183,6 +183,12 @@ void intersection(map<string, ConvexPolygon>& polygons) {
 	else polygons[name1] = polygons[names[0]] * polygons[names[1]];
 }
 
+void regular(map<string, ConvexPolygon>& polygons) {
+	string name;
+	cin >> name;
+	cout << (polygons[name].is_regular() ? "yes" : "no") << endl;
+}
+
 int main() {
 	cout.setf(ios::fixed);
     cout.precision(3);
@@ -205,6 +211,7 @@ int main() {
 		else if (action == "union")		p_union(polygons);
 		else if (action == "inside")	inside(polygons);
 		else if (action == "bbox") bbox(polygons);
+		else if (action == "regular") regular(polygons);
 		else {
 			string s;
 			getline(cin, s);

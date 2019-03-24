@@ -63,7 +63,7 @@ public:
 	bool is_inside (const ConvexPolygon& cpol) const;
 
 	// Draws the list of polygons given as input.
-	void draw (const char* img_name, const vector<ConvexPolygon>& lpol);
+	void draw (const char* img_name, const vector<ConvexPolygon>& lpol) const;
 
 	// Intersects this polygon with another one and returns this polygon.
 	ConvexPolygon& operator*= (const ConvexPolygon& cpol);
@@ -71,12 +71,8 @@ public:
 	// Returns the intersection of this polygon with another one.
 	ConvexPolygon operator* (const ConvexPolygon& cpol) const;
 
-/**
-
 	// Tells whether the polygon is regular or not.
-	bool regular () const;
-
-*/
+	bool is_regular () const;
 
 private:
 
