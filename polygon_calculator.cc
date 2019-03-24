@@ -15,14 +15,21 @@ void comment() {
 }
 
 void polygon(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	vector<Point> v;
 	string s;
 	getline(cin, s);
 	istringstream iss(s);
+
+	string name;
+	iss >> name;
+	vector<Point> v;
 	double x, y;
-	while(iss >> x >> y) {
+	while (iss.rdbuf()->in_avail()) { // Istringstream is not empty
+
+		// Error handling
+		if (!(iss >> x >> y)) {
+			cout << "error: command with wrong number or type of arguments" << endl;
+			return;
+		}
 		v.push_back(Point(x,y));
 	}
 	ConvexPolygon polyg(v);
@@ -30,14 +37,94 @@ void polygon(map<string, ConvexPolygon>& polygons) {
 }
 
 void print(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
 	string name;
-	cin >> name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+
 	cout << name;
 	vector<Point> vert = polygons[name].vertices();
 	for (const Point& p : vert) {
 		cout << "  " << p.X() << ' ' << p.Y();
 	}
 	cout << endl;
+}
+
+void area(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+
+	cout << polygons[name].area() << endl;
+}
+
+void perimeter(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+	
+	cout << polygons[name].perimeter() << endl;
+}
+
+void n_vertices(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+	
+	cout << polygons[name].vertices().size() << endl;
+}
+
+void centroid(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+	
+	cout << polygons[name].centroid().X() << " " << polygons[name].centroid().Y() << endl;
+}
+
+void list(const map<string, ConvexPolygon>& polygons) {
+	for (const auto& elem : polygons) {
+		cout << elem.first << endl;
+	}
 }
 
 string vert_output(const string& name, const ConvexPolygon& polyg) {
@@ -53,36 +140,6 @@ string vert_output(const string& name, const ConvexPolygon& polyg) {
 	return oss.str();
 }
 
-void area(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	cout << polygons[name].area() << endl;
-}
-
-void perimeter(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	cout << polygons[name].perimeter() << endl;
-}
-
-void n_vertices(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	cout << polygons[name].vertices().size() << endl;
-}
-
-void centroid(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	cout << polygons[name].centroid().X() << " " << polygons[name].centroid().Y() << endl;
-}
-
-void list(const map<string, ConvexPolygon>& polygons) {
-	for (const auto& elem : polygons) {
-		cout << elem.first << endl;
-	}
-}
-
 void save(map<string, ConvexPolygon>& polygons) {
 	string filename;
 	cin >> filename;
@@ -92,6 +149,13 @@ void save(map<string, ConvexPolygon>& polygons) {
 	string name;
 	ofstream f(filename);
 	while (iss >> name) {
+
+		// Error handling
+		if (polygons.count(name) == 0) {
+			cout << "error: undefined polygon identifier" << endl;
+			return;
+		}
+		
 		f << vert_output(name, polygons[name]);
 	}
 	f.close();
@@ -107,19 +171,42 @@ void load(map<string, ConvexPolygon>& polygons) {
 		string name;
 		iss >> name;
 		vector<Point> points;
-		string sx, sy;
-		while (iss >> sx >> sy) {
-			points.push_back(Point(stod(sx), stod(sy)));
+		double x, y;
+		while (iss.rdbuf()->in_avail()) {
+
+			// Error handling
+			if (!(iss >> x >> y)) {
+				cout << "error: wrong format" << endl;
+				return;
+			}
+
+			points.push_back(Point(x, y));
 		}
 		polygons[name] = ConvexPolygon(points, true);
 	}
 }
 
 void setcol(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
 	string name;
-	cin >> name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+	
 	double r, g, b;
-	cin >> r >> g >> b;
+
+	// Error handling
+	if (!(cin >> r >> g >> b)) {
+		cout << "error: command with wrong number or type of arguments" << endl;
+		return;
+	}
+
 	polygons[name].set_color(r, g, b);
 }
 
@@ -132,60 +219,135 @@ void draw(map<string, ConvexPolygon>& polygons) {
 	vector<ConvexPolygon> pols;
 	string name;
 	while (iss >> name) {
+
+		// Error handling
+		if (polygons.count(name) == 0) {
+			cout << "error: undefined polygon identifier" << endl;
+			return;
+		}
+		
 		pols.push_back(polygons[name]);
 	}
 	polygons[name].draw(img_name.c_str(), pols);
 }
 
-void p_union(map<string, ConvexPolygon>& polygons) {
-	string result_name;
-	cin >> result_name;
-	string s;
-	getline(cin, s);
-	istringstream iss(s);
-	string pol;
-	while(iss >> pol) polygons[result_name] += polygons[pol];
-}
-
-void inside(map<string, ConvexPolygon>& polygons) {
-	string name1, name2;
-	cin >> name1 >> name2;
-	cout << polygons[name1].is_inside(polygons[name2]) << endl;
-}
-
-void bbox(map<string, ConvexPolygon>& polygons) {
-	string name;
-	cin >> name;
-	// Building a vector of all polygons.
-	vector<ConvexPolygon> cpols;
-	string s;
-	getline(cin, s);
-	istringstream iss(s);
-	string pol_name;
-	while(iss >> pol_name) {
-		cpols.push_back(polygons[pol_name]);
-	}
-	polygons[name].bounding_box(cpols);
-}
-
 void intersection(map<string, ConvexPolygon>& polygons) {
-	string name1;
-	cin >> name1;
 	string s;
 	getline(cin, s);
 	istringstream iss(s);
+	string name1;
+	iss >> name1;
+
+	// Error handling
+	if (polygons.count(name1) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
 	vector<string> names;
 	int i = 0;
 	while (iss >> s) {
+
+		// Error handling
+		if (polygons.count(s) == 0) {
+			cout << "error: undefined polygon identifier" << endl;
+			return;
+		}
+
 		names.push_back(s); ++i;
 	}
 	if (i == 1) polygons[name1] *= polygons[names[0]];
 	else polygons[name1] = polygons[names[0]] * polygons[names[1]];
 }
 
-void regular(map<string, ConvexPolygon>& polygons) {
+void p_union(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string result_name;
+	iss >> result_name;
+
+	// Error handling
+	if (polygons.count(result_name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		string s;
+		getline(cin, s);
+		return;
+	}
+	
+	vector<string> names;
+	int i = 0;
+	while(iss >> s) {
+
+		// Error handling
+		if (polygons.count(s) == 0) {
+			cout << "error: undefined polygon identifier" << endl;
+			return;
+		}
+
+		names.push_back(s); ++i;
+	}
+	if (i == 1) polygons[result_name] += polygons[names[0]];
+	else polygons[result_name] = polygons[names[0]] + polygons[names[1]];
+}
+
+void inside(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name1, name2;
+	iss >> name1 >> name2;
+
+	// Error handling
+	if (polygons.count(name1) == 0 or polygons.count(name2) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+	
+	cout << polygons[name1].is_inside(polygons[name2]) << endl;
+}
+
+void bbox(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
 	string name;
-	cin >> name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+
+	// Building a vector of all polygons.
+	vector<ConvexPolygon> cpols;
+	string pol_name;
+	while(iss >> pol_name) {
+
+		// Error handling
+		if (polygons.count(pol_name) == 0) {
+			cout << "error: undefined polygon identifier" << endl;
+			return;
+		}
+
+		cpols.push_back(polygons[pol_name]);
+	}
+	polygons[name].bounding_box(cpols);
+}
+
+void regular(map<string, ConvexPolygon>& polygons) {
+	string s;
+	getline(cin, s);
+	istringstream iss(s);
+	string name;
+	iss >> name;
+
+	// Error handling
+	if (polygons.count(name) == 0) {
+		cout << "error: undefined polygon identifier" << endl;
+		return;
+	}
+
 	cout << (polygons[name].is_regular() ? "yes" : "no") << endl;
 }
 
@@ -212,6 +374,8 @@ int main() {
 		else if (action == "inside")	inside(polygons);
 		else if (action == "bbox") bbox(polygons);
 		else if (action == "regular") regular(polygons);
+
+		// Error handling
 		else {
 			string s;
 			getline(cin, s);
