@@ -52,8 +52,13 @@ void print(map<string, ConvexPolygon>& polygons) {
 
 	cout << name;
 	vector<Point> vert = polygons[name].vertices();
+
+	// Printing in clockwise order
+	cout << ' ' << vert[0].X() << ' ' << vert[0].Y();
+	reverse(vert.begin(), vert.end());
+	vert.pop_back();
 	for (const Point& p : vert) {
-		cout << "  " << p.X() << ' ' << p.Y();
+		cout << ' ' << p.X() << ' ' << p.Y();
 	}
 	cout << endl;
 }
@@ -123,8 +128,11 @@ void centroid(map<string, ConvexPolygon>& polygons) {
 }
 
 void list(const map<string, ConvexPolygon>& polygons) {
+	bool first = true;
 	for (const auto& elem : polygons) {
-		cout << elem.first << ' ';
+		if (not first) cout << ' ';
+		else first = false;
+		cout << elem.first;
 	}
 	cout << endl;
 }
@@ -175,7 +183,7 @@ void load(map<string, ConvexPolygon>& polygons) {
 		iss >> name;
 		vector<Point> points;
 		double x, y;
-		while (iss.rdbuf()->in_avail()) {
+		while (iss.rdbuf()->in_avail()) { // There are still elements in the istringstream
 
 			// Error handling
 			if (!(iss >> x >> y)) {
@@ -185,7 +193,7 @@ void load(map<string, ConvexPolygon>& polygons) {
 
 			points.push_back(Point(x, y));
 		}
-		polygons[name] = ConvexPolygon(points, true);
+		polygons[name] = ConvexPolygon(points);
 	}
 	cout << "ok" << endl;
 }

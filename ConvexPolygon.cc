@@ -57,7 +57,6 @@ vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 
 	// The first and last points are the same
 	conv_hull.pop_back();
-
 	return conv_hull;
 }
 
