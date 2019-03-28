@@ -1,4 +1,4 @@
-#include "Point.hh"
+#include "Point.h"
 
 #include <cmath>
 using namespace std;
@@ -74,6 +74,23 @@ Point& Point::operator+= (const Point& p) {
 Point Point::operator+ (const Point& p) const {
     Point q = p;
     q += *this;
+    return q;
+
+    // Equivalent one-liner: return Point(p) += *this;
+}
+
+/** Substracts the coordinates of p to this point and returns this point. */
+Point& Point::operator-= (const Point& p) {
+    x -= p.x;
+    y -= p.y;
+    return *this;
+}
+
+
+/** Returns the point resulting of substracting the coordinates of this point and p. */
+Point Point::operator- (const Point& p) const {
+    Point q = *this;
+    q -= p;
     return q;
 
     // Equivalent one-liner: return Point(p) += *this;

@@ -225,16 +225,19 @@ void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpo
 	box.bounding_box(lpol, LL, UR);
 	const int size = 500;
 	int scale = min(((size-4))/(UR.Y()-LL.Y()), ((size-4))/(UR.X()-LL.X()));
+	Point centroid = box.centroid();
+	Point scaled_centroid = Point(scale*(centroid.X() - LL.X()) + 2, scale*(centroid.Y() - LL.Y()) + 2);
+	Point displacement = Point(250, 250) - scaled_centroid;
 	pngwriter png(size, size, 1.0, img_name);
 	for (const ConvexPolygon& pol : lpol) {
 		int n = pol.vertices().size(); ++n;
 		int points[2*n], i=0;
 		for (const Point& p : pol.vertices()) {
-			points[i++] = scale*(p.X() - LL.X()) + 2;
-			points[i++] = scale*(p.Y() - LL.Y()) + 2;
+			points[i++] = scale*(p.X() - LL.X()) + 2 + displacement.X();
+			points[i++] = scale*(p.Y() - LL.Y()) + 2 + displacement.Y();
 		}
-		points[i++] = scale*(pol.vertices()[0].X() - LL.X()) + 2;
-		points[i++] = scale*(pol.vertices()[0].Y() - LL.Y()) + 2;
+		points[i++] = scale*(pol.vertices()[0].X() - LL.X()) + 2 + displacement.X();
+		points[i++] = scale*(pol.vertices()[0].Y() - LL.Y()) + 2 + displacement.Y();
 		png.polygon(points, n, pol.r, pol.g, pol.b);
 	}
 	png.close();

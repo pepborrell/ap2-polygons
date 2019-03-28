@@ -1,5 +1,5 @@
-#ifndef Point_hh
-#define Point_hh
+#ifndef Point_h
+#define Point_h
 
 
 /** The Point class stores a two dimensional point in the plane
@@ -39,6 +39,12 @@ public:
 
     /** Returns the point resulting of adding the coordinates of this point and p. */
     Point operator+ (const Point& p) const;
+    
+    /** Substracts the coordinates of p to this point and returns this point. */
+    Point& operator-= (const Point& p);
+
+    /** Returns the point resulting of substracting the coordinates of this point and p. */
+    Point operator- (const Point& p) const;
 
 
 

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <pngwriter.h>
-#include "Point.hh"
+#include "Point.h"
 
 #include <iostream> // Delete this and all cerr's
 

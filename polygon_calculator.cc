@@ -34,6 +34,7 @@ void polygon(map<string, ConvexPolygon>& polygons) {
 	}
 	ConvexPolygon polyg(v);
 	polygons[name] = polyg;
+	cout << "ok" << endl;
 }
 
 void print(map<string, ConvexPolygon>& polygons) {
@@ -123,8 +124,9 @@ void centroid(map<string, ConvexPolygon>& polygons) {
 
 void list(const map<string, ConvexPolygon>& polygons) {
 	for (const auto& elem : polygons) {
-		cout << elem.first << endl;
+		cout << elem.first << ' ';
 	}
+	cout << endl;
 }
 
 string vert_output(const string& name, const ConvexPolygon& polyg) {
@@ -159,6 +161,7 @@ void save(map<string, ConvexPolygon>& polygons) {
 		f << vert_output(name, polygons[name]);
 	}
 	f.close();
+	cout << "ok" << endl;
 }
 
 void load(map<string, ConvexPolygon>& polygons) {
@@ -184,6 +187,7 @@ void load(map<string, ConvexPolygon>& polygons) {
 		}
 		polygons[name] = ConvexPolygon(points, true);
 	}
+	cout << "ok" << endl;
 }
 
 void setcol(map<string, ConvexPolygon>& polygons) {
@@ -192,7 +196,7 @@ void setcol(map<string, ConvexPolygon>& polygons) {
 	istringstream iss(s);
 	string name;
 	iss >> name;
-
+	
 	// Error handling
 	if (polygons.count(name) == 0) {
 		cout << "error: undefined polygon identifier" << endl;
@@ -202,12 +206,13 @@ void setcol(map<string, ConvexPolygon>& polygons) {
 	double r, g, b;
 
 	// Error handling
-	if (!(cin >> r >> g >> b)) {
+	if (!(iss >> r >> g >> b)) {
 		cout << "error: command with wrong number or type of arguments" << endl;
 		return;
 	}
 
 	polygons[name].set_color(r, g, b);
+	cout << "ok" << endl;
 }
 
 void draw(map<string, ConvexPolygon>& polygons) {
@@ -229,6 +234,7 @@ void draw(map<string, ConvexPolygon>& polygons) {
 		pols.push_back(polygons[name]);
 	}
 	polygons[name].draw(img_name.c_str(), pols);
+	cout << "ok" << endl;
 }
 
 void intersection(map<string, ConvexPolygon>& polygons) {
@@ -257,6 +263,7 @@ void intersection(map<string, ConvexPolygon>& polygons) {
 	}
 	if (i == 1) polygons[name1] *= polygons[names[0]];
 	else polygons[name1] = polygons[names[0]] * polygons[names[1]];
+	cout << "ok" << endl;
 }
 
 void p_union(map<string, ConvexPolygon>& polygons) {
@@ -288,6 +295,7 @@ void p_union(map<string, ConvexPolygon>& polygons) {
 	}
 	if (i == 1) polygons[result_name] += polygons[names[0]];
 	else polygons[result_name] = polygons[names[0]] + polygons[names[1]];
+	cout << "ok" << endl;
 }
 
 void inside(map<string, ConvexPolygon>& polygons) {
@@ -303,7 +311,7 @@ void inside(map<string, ConvexPolygon>& polygons) {
 		return;
 	}
 	
-	cout << polygons[name1].is_inside(polygons[name2]) << endl;
+	cout << (polygons[name1].is_inside(polygons[name2]) ? "yes" : "no") << endl;
 }
 
 void bbox(map<string, ConvexPolygon>& polygons) {
@@ -312,12 +320,6 @@ void bbox(map<string, ConvexPolygon>& polygons) {
 	istringstream iss(s);
 	string name;
 	iss >> name;
-
-	// Error handling
-	if (polygons.count(name) == 0) {
-		cout << "error: undefined polygon identifier" << endl;
-		return;
-	}
 
 	// Building a vector of all polygons.
 	vector<ConvexPolygon> cpols;
@@ -333,6 +335,7 @@ void bbox(map<string, ConvexPolygon>& polygons) {
 		cpols.push_back(polygons[pol_name]);
 	}
 	polygons[name].bounding_box(cpols);
+	cout << "ok" << endl;
 }
 
 void regular(map<string, ConvexPolygon>& polygons) {

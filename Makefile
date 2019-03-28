@@ -24,8 +24,8 @@ polygon_calculator: Point.o ConvexPolygon.o polygon_calculator.o
 ## Dependencies between files
 # (we don't need to precise how to produce them, Makefile already knows)
 
-polygon_calculator.o: polygon_calculator.cc Point.hh ConvexPolygon.h
+polygon_calculator.o: polygon_calculator.cc Point.h ConvexPolygon.h
 
-Point.o: Point.cc Point.hh
+Point.o: Point.cc Point.h
 
 ConvexPolygon.o: ConvexPolygon.cc ConvexPolygon.h
