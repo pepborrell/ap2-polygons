@@ -140,13 +140,20 @@ void list(const map<string, ConvexPolygon>& polygons) {
 string vert_output(const string& name, const ConvexPolygon& polyg) {
 	ostringstream oss;
 	oss.setf(ios::fixed);
-    oss.precision(3);
+	oss.precision(3);
+
 	oss << name;
-	vector<Point> vert = polyg.vertices();
+	vector<Point> vert = polygons[name].vertices();
+
+	// Printing in clockwise order
+	oss << ' ' << vert[0].X() << ' ' << vert[0].Y();
+	reverse(vert.begin(), vert.end());
+	oss.pop_back();
 	for (const Point& p : vert) {
-		oss << "  " << p.X() << ' ' << p.Y();
+		oss << ' ' << p.X() << ' ' << p.Y();
 	}
 	oss << endl;
+
 	return oss.str();
 }
 
