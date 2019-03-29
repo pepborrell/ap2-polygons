@@ -4,7 +4,7 @@ This project mainly consists of an implementation of the class `ConvexPolygon` (
 
 In order to complement the two main parts of the project, some test cases of different kind have been written. They are located in the folder named `test_cases`.
 
-The class `Point` has been used as a means to make the implementation easier. This class was provided by [Jordi Petit](https://www.cs.upc.edu/~jpetit/) [source](https://github.com/jordi-petit/ap2-moduls) and further developed in order to satisfy some needs.
+The class `Point` has been used as a means to make the implementation easier. This class was provided by [Jordi Petit](https://www.cs.upc.edu/~jpetit/) ([source](https://github.com/jordi-petit/ap2-moduls)) and further developed in order to satisfy some needs.
 
 ## Instructions for the installation and running of the project
 These instructions are aimed at installing the files in a Unix-based operative system (namely Linux and Mac OS). The instructions given have to be performed using a terminal or a terminal emulator.
@@ -94,9 +94,3 @@ The methods implemented in the `ConvexPolygon` class provide some useful operati
 + Intersection: It finds all vertices of each polygon that lay inside the other. Then checks for all possible intersection between sides of polygons. After this, the algorithm lists all these points and computes their Convex Hull. Complexity: `O(m n)`.
 
 + Regular: Checks if all sides and angles are the same.
-
-
-
-### Dumping place - yet to be organised
-+ Source of information about the winding number algorithm [source](http://geomalgorithms.com/a03-_inclusion.html)
-+ Intersection of polygons [source](https://www.swtestacademy.com/intersection-convex-polygons-algorithm/)
