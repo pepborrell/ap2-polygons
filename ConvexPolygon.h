@@ -53,7 +53,7 @@ public:
 	ConvexPolygon bounding_box (const vector<ConvexPolygon>& polygons);
 
 	// Sets and returns this as the smallest rectangle that contains all polygons. It also changes the coordinates
-	// of the lower lefts and upper right.
+	// of the lower left and upper right.
 	ConvexPolygon bounding_box (const vector<ConvexPolygon>& polygons, Point& LL, Point& UR); 
 
 	// Tells whether a point is inside this polygon.
@@ -88,8 +88,7 @@ private:
 	// Removes last point of the vector of vertices.
 	void remove_last_vertex ();
 	
-	// Tells whether a point is inside a triangle by checking if all
-	// vertex-vertex-point turns are counter-clockwise
+	// Tells whether a point is inside a triangle
 	bool p_inside_triangle (const Point& p) const;
 
 	// Returns the points of a polygon that are inside of this polygon.

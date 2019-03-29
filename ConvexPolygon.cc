@@ -4,7 +4,7 @@
 using namespace std;
 
 
-/*	Computes the 2D cross product of ab and ac vectors (z component).
+/**	Computes the 2D cross product of ab and ac vectors (z component).
  *	Returns a positive value if abc makes a counter-clockwise turn
  *	Returns a negative value if abc makes a clockwise turn.
  *	| i   j   k   |
@@ -15,14 +15,14 @@ static double cross_p(const Point& a, const Point& b, const Point& c) {
 	return (b.X() - a.X()) * (c.Y() - a.Y()) - (b.Y() - a.Y()) * (c.X() - a.X());
 }
 
-/*	Compares two points using the x-coordinate first
+/**	Compares two points using the x-coordinate first
  */
 static bool compare(const Point& p, const Point& q) {
     if (p.X() < q.X() + 1e-12 and p.X() > q.X() - 1e-12) return p.Y() < q.Y();
     else return p.X() < q.X();
 }
 
-/* 	Returns the convex hull as a list of points in counter-clockwise order
+/** Returns the convex hull as a list of points in counter-clockwise order
  *	The convex hull of the points given is computed using 
  *	Andrew's monotone chain algorithm (n log n complexity)
  */
@@ -60,32 +60,34 @@ vector<Point> ConvexPolygon::convex_hull(vector<Point>& points) {
 	return conv_hull;
 }
 
-// Default constructor
+/** Void constructor */
 ConvexPolygon::ConvexPolygon() {}
 
-// Constructor
+/** Constructor */
 ConvexPolygon::ConvexPolygon(vector<Point>& points) {
 	theVertices = convex_hull(points);
 }
 
-// Constructor
+/** Constructor */
 ConvexPolygon::ConvexPolygon(vector<Point>& points, bool points_sorted) {
 	if (not points_sorted) theVertices = convex_hull(points);
 	else theVertices = points;
 }
 
-// Returns the vertices of the polygon in counter-clockwise order.
+/** Returns the vertices of the polygon in counter-clockwise order. */
 vector<Point> ConvexPolygon::vertices () const {
 	return theVertices;
 }
 
-// Removes last vertex of the vector of vertices.
+/** Removes last vertex of the vector of vertices. */
 void ConvexPolygon::remove_last_vertex() {
 	theVertices.pop_back();
 }
 
 
-// Returns the perimeter of the polygon.
+/** Returns the perimeter of the polygon. 
+ *  It does so by adding the distance between each two adjacent vertices.
+ */
 double ConvexPolygon::perimeter () const {
 	double perim = 0;
 	int n = theVertices.size();
@@ -116,7 +118,7 @@ double ConvexPolygon::area () const {
 	return (ConvexPolygon(aux_vec).area() + ConvexPolygon(polyg_copy).area());
 }
 
-// Returns the centroid of the polygon.
+/** Returns the centroid of the polygon. */
 Point ConvexPolygon::centroid () const {
 	double sum_x = 0, sum_y = 0;
 	for (const Point& p : theVertices) {
@@ -127,12 +129,12 @@ Point ConvexPolygon::centroid () const {
 	return Point(sum_x, sum_y);
 }
 
-// Sets the color of the polygon.
+/** Sets the color of the polygon. */
 void ConvexPolygon::set_color (double R, double G, double B) {
 	r = R; g = G; b = B;
 }
 
-// Enlarges this, so it becomes a convex union of this with another polygon.
+/** Enlarges this, so it becomes a convex union of this with another polygon. */
 ConvexPolygon& ConvexPolygon::operator+= (const ConvexPolygon& cpol) {
 	// Concatenation of vectors of points
 	for (const Point& p : cpol.theVertices) {
@@ -143,14 +145,14 @@ ConvexPolygon& ConvexPolygon::operator+= (const ConvexPolygon& cpol) {
 }
 
 
-// Returns the convex union of this and another polygon.
+/** Returns the convex union of this and another polygon. */
 ConvexPolygon ConvexPolygon::operator+ (const ConvexPolygon& cpol) const {
 	ConvexPolygon dpol = cpol;
 	dpol += *this;
 	return dpol;
 }
 
-// Sets and returns this as the smallest rectangle that contains all polygons.
+/** Sets and returns this as the smallest rectangle that contains all polygons. */
 ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons) {
 	double x_min = polygons[0].vertices()[0].X(), x_max = x_min;
 	double y_min = polygons[0].vertices()[0].Y(), y_max = y_min;
@@ -167,8 +169,9 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 	return *this;
 }
 
-// Sets and returns this as the smallest rectangle that contains all polygons. ALso changes the coordinates
-// of the lower lefts and upper right.
+/** Sets and returns this as the smallest rectangle that contains all polygons. Also changes the coordinates
+ * of the lower left and upper right.
+ */
 ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons, Point& LL, Point& UR) {
 	double x_min = polygons[0].vertices()[0].X(), x_max = x_min;
 	double y_min = polygons[0].vertices()[0].Y(), y_max = y_min;
@@ -187,46 +190,61 @@ ConvexPolygon ConvexPolygon::bounding_box (const vector<ConvexPolygon>& polygons
 	return *this;
 }
 
-// Tells whether a point is inside a triangle by checking if all
-// vertex-vertex-point turns are counter-clockwise
+/** Tells whether a point is inside a triangle by checking if all
+ * vertex-vertex-point turns are counter-clockwise.
+ */
 bool ConvexPolygon::p_inside_triangle(const Point& p) const {
-	bool turn_a = cross_p(vertices()[0], vertices()[1], p) >= 0;
-	bool turn_b = cross_p(vertices()[1], vertices()[2], p) >= 0;
-	bool turn_c = cross_p(vertices()[2], vertices()[0], p) >= 0;
+	bool turn_a = cross_p(vertices()[0], vertices()[1], p) >= 1e-12;
+	bool turn_b = cross_p(vertices()[1], vertices()[2], p) >= 1e-12;
+	bool turn_c = cross_p(vertices()[2], vertices()[0], p) >= 1e-12;
 	return turn_a and turn_b and turn_c;
 }
 
-// Tells whether a point is inside this polygon.
+/** Tells whether a point is inside this polygon. 
+ *  It uses a divide and conquer algorithm that divides each polygon into
+ *  two smaller ones and a triangle, then recursively checking for each one.
+*/
 bool ConvexPolygon::p_is_inside (const Point& p) const {
 	int n = vertices().size();
-	if (n < 3) return false;
+	if (n < 3) {
+		// If both points are the same
+		if (n == 1 and abs(vertices()[0].X()-p.X()) < 1e-12 and abs(vertices()[0].Y()-p.Y()) < 1e-12) return true;
+		// The three points are collinear
+		if (n == 2 and abs(cross_p(vertices()[0], vertices()[1], p)) < 1e-12) return true;
+		return false;
+	}
 	if (n == 3) return p_inside_triangle(p);
 	else {
-		vector<Point> v_aux_tri = {theVertices[n-2], theVertices[n-1], theVertices[0]};
-		ConvexPolygon aux_tri(v_aux_tri);
-		ConvexPolygon polyg_copy = *this;
-		polyg_copy.remove_last_vertex();
-		return aux_tri.p_inside_triangle(p) or polyg_copy.p_is_inside(p);
+		auto middle = vertices().begin() + n/2;
+		vector<Point> v1(vertices().begin(), middle);
+		vector<Point> v2(middle, vertices().end()); v2.push_back(vertices()[0]);
+		vector<Point> vtriangle = {*(middle-1), *middle, vertices()[0]};
+		ConvexPolygon cpol1(v1, true);
+		ConvexPolygon cpol2(v2, true);
+		ConvexPolygon triangle(vtriangle, true);
+		return triangle.p_inside_triangle(p) or cpol1.p_is_inside(p) or cpol2.p_is_inside(p);
 	}
 }
 
-// Tells whether this polygon is inside a polygon.
+/** Tells whether this polygon is inside the input polygon.
+ *  Checks for all vertices of this polygon.
+ */
 bool ConvexPolygon::is_inside (const ConvexPolygon& cpol) const {
 	bool inside = true;
 	for (const Point& p : vertices()) if (not cpol.p_is_inside(p)) inside = false;
 	return inside;
 }
 
-// Draws the list of polygons given as input.
+/** Draws the list of polygons given as input. */
 void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpol) const {
 	Point LL, UR;
 	ConvexPolygon box;
 	box.bounding_box(lpol, LL, UR);
 	const int size = 500;
-	int scale = min(((size-4))/(UR.Y()-LL.Y()), ((size-4))/(UR.X()-LL.X()));
+	int scale = min(((size-4))/(UR.Y()-LL.Y()), ((size-4))/(UR.X()-LL.X())); // Scale factor: to fill the whole space.
 	Point centroid = box.centroid();
 	Point scaled_centroid = Point(scale*(centroid.X() - LL.X()) + 2, scale*(centroid.Y() - LL.Y()) + 2);
-	Point displacement = Point(250, 250) - scaled_centroid;
+	Point displacement = Point(250, 250) - scaled_centroid; // Used to center all elements in the image.
 	pngwriter png(size, size, 1.0, img_name);
 	for (const ConvexPolygon& pol : lpol) {
 		int n = pol.vertices().size(); ++n;
@@ -242,7 +260,9 @@ void ConvexPolygon::draw (const char* img_name, const vector<ConvexPolygon>& lpo
 	png.close();
 }
 
-// Returns true if an intersection was found and, if true, places its value in the intersection input-output variable.
+/** Returns true if an intersection between the given lines (r and s) is found and, 
+ *  if true, places its value in the intersection variable.
+ */
 static bool intersection_segments (const Point& r1, const Point& r2, const Point& s1, const Point& s2, Point& intersection) {
 	// Finding the two lines that lay on the points
 	double rA = r2.Y() - r1.Y();
@@ -267,7 +287,7 @@ static bool intersection_segments (const Point& r1, const Point& r2, const Point
 	return false;
 }
 
-// Returns the points of a polygon that are inside of this polygon.
+/** Returns the points of a polygon that are inside of this polygon. */
 vector<Point> ConvexPolygon::list_points_inside (const ConvexPolygon& cpol) const {
 	vector<Point> v;
 	for (const Point& p : cpol.vertices()) {
@@ -276,11 +296,15 @@ vector<Point> ConvexPolygon::list_points_inside (const ConvexPolygon& cpol) cons
 	return v;
 }
 
-// Intersects this polygon with another one and returns this polygon.
+/** Intersects this polygon with another one and returns this polygon.
+ *  It finds the vertices of one polygon that lay inside of the other. It then checks
+ *  for all possible intersections between sides and adds them to the list. It finally
+ *  computes the convex hull of all points and returns it.
+ */
 ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& cpol) {
 	vector<Point> intersection_vertices;
 
-	// Finding the vertices that lay inside both polygons.
+	// Finding the vertices that lay inside a polygon.
 	vector<Point> pts_inside = cpol.list_points_inside(*this);
 	intersection_vertices.insert(intersection_vertices.end(), pts_inside.begin(), pts_inside.end());
 	pts_inside = list_points_inside(cpol);
@@ -300,14 +324,16 @@ ConvexPolygon& ConvexPolygon::operator*= (const ConvexPolygon& cpol) {
 	return *this;
 }
 
-// Returns the intersection of this polygon with another one.
+/** Returns the intersection of this polygon with another one. */
 ConvexPolygon ConvexPolygon::operator* (const ConvexPolygon& cpol) const {
 	ConvexPolygon dpol = cpol;
 	dpol *= *this;
 	return dpol;
 }
 
-// Tells whether the polygon is regular or not.
+/** Tells whether the polygon is regular or not. 
+ *  It first checks for all sides then for all angles.
+ */
 bool ConvexPolygon::is_regular () const {
 	// Checking for all sides
 	int n = vertices().size();
@@ -316,11 +342,11 @@ bool ConvexPolygon::is_regular () const {
 		if (abs(dist - vertices()[ii].distance(vertices()[i])) > 1e-12) return false;
 	}
 
-	// Checking for all angles (using the cross product, given that we know that all sides are equal)
+	// Checking for all angles using the cross product.
+	// Precondition: if all sides are equal, the cross products depends only on the angle.
 	double cross = cross_p(vertices()[n-2], vertices()[n-1], vertices()[0]);
 	for (int i=1, ii = 0, iii = n-1; i<n; iii=ii, ii=i++) {
 		if (abs(cross - cross_p(vertices()[iii], vertices()[ii], vertices()[i])) > 1e-12) return false;
 	}
 	return true;
 }
-

@@ -14,6 +14,7 @@ void comment() {
 	getline(cin, s);
 }
 
+// To define a polygon
 void polygon(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -37,6 +38,7 @@ void polygon(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Prints a polygon in clockwise order
 void print(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -63,6 +65,7 @@ void print(map<string, ConvexPolygon>& polygons) {
 	cout << endl;
 }
 
+// Prints the area of the polygon
 void area(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -79,6 +82,7 @@ void area(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].area() << endl;
 }
 
+// Prints the perimeter
 void perimeter(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -95,6 +99,7 @@ void perimeter(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].perimeter() << endl;
 }
 
+// Prints the number of vertices of the polygon
 void n_vertices(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -111,6 +116,7 @@ void n_vertices(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].vertices().size() << endl;
 }
 
+// Prints the centroid
 void centroid(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -127,6 +133,7 @@ void centroid(map<string, ConvexPolygon>& polygons) {
 	cout << polygons[name].centroid().X() << " " << polygons[name].centroid().Y() << endl;
 }
 
+// Lists all polygons
 void list(const map<string, ConvexPolygon>& polygons) {
 	bool first = true;
 	for (const auto& elem : polygons) {
@@ -137,6 +144,7 @@ void list(const map<string, ConvexPolygon>& polygons) {
 	cout << endl;
 }
 
+// Returns a string with the output that would be printed when print is called.
 string vert_output(const string& name, const ConvexPolygon& polyg) {
 	ostringstream oss;
 	oss.setf(ios::fixed);
@@ -157,6 +165,7 @@ string vert_output(const string& name, const ConvexPolygon& polyg) {
 	return oss.str();
 }
 
+// Saves the polygons in a file
 void save(map<string, ConvexPolygon>& polygons) {
 	string filename;
 	cin >> filename;
@@ -179,6 +188,8 @@ void save(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Loads the polygons from a file. In case they are not sorted,
+// the ConvexPolygon constructor is set to false.
 void load(map<string, ConvexPolygon>& polygons) {
 	string filename;
 	cin >> filename;
@@ -200,11 +211,12 @@ void load(map<string, ConvexPolygon>& polygons) {
 
 			points.push_back(Point(x, y));
 		}
-		polygons[name] = ConvexPolygon(points);
+		polygons[name] = ConvexPolygon(points, false);
 	}
 	cout << "ok" << endl;
 }
 
+// Sets the color of the polygon
 void setcol(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -230,6 +242,7 @@ void setcol(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Draws the polygons given
 void draw(map<string, ConvexPolygon>& polygons) {
 	string img_name;
 	cin >> img_name;
@@ -252,6 +265,9 @@ void draw(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Computes the intersection of the two polygons given as input.
+// If the input consists of 2 polygons the first is redefined as the intersection.
+// If the input are 3 polygons, the first is redefined as the intersection of the other ones.
 void intersection(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -281,6 +297,9 @@ void intersection(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Computes the convex union of the two polygons given as input.
+// If the input consists of 2 polygons the first is redefined as the convex union.
+// If the input are 3 polygons, the first is redefined as the convex union of the other ones.
 void p_union(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -313,6 +332,7 @@ void p_union(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Prints if the first polygon is inside the second one
 void inside(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -329,6 +349,7 @@ void inside(map<string, ConvexPolygon>& polygons) {
 	cout << (polygons[name1].is_inside(polygons[name2]) ? "yes" : "no") << endl;
 }
 
+// Defines the first polygon as the bounding box of the subsequent ones.
 void bbox(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
@@ -353,6 +374,7 @@ void bbox(map<string, ConvexPolygon>& polygons) {
 	cout << "ok" << endl;
 }
 
+// Prints if the polygon is regular
 void regular(map<string, ConvexPolygon>& polygons) {
 	string s;
 	getline(cin, s);
