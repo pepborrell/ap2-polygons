@@ -143,12 +143,12 @@ string vert_output(const string& name, const ConvexPolygon& polyg) {
 	oss.precision(3);
 
 	oss << name;
-	vector<Point> vert = polygons[name].vertices();
+	vector<Point> vert = polyg.vertices();
 
 	// Printing in clockwise order
 	oss << ' ' << vert[0].X() << ' ' << vert[0].Y();
 	reverse(vert.begin(), vert.end());
-	oss.pop_back();
+	vert.pop_back();
 	for (const Point& p : vert) {
 		oss << ' ' << p.X() << ' ' << p.Y();
 	}
