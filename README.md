@@ -61,8 +61,8 @@ diff ./test_cases/<test_case_name>/output ./test_cases/<test_case_name>/exptd_ou
 
 The lines that differ are indicated with a bar (`|`). The only thing that can differ a bit are the error messages because they are not fixed and depend on the implementation.
 
-### Some additional installation tools
-Some tools may be needed for the compilation of the project:
+### Some additional tools
+Some tools may be required during the compilation of the project:
 
 + Mac OS users: the following lines are a guide to installing `cmake` and `libpng`:
 ```
@@ -94,3 +94,21 @@ The methods implemented in the `ConvexPolygon` class provide some useful operati
 + Intersection: It finds all vertices of each polygon that lay inside the other. Then checks for all possible intersection between sides of polygons. After this, the algorithm lists all these points and computes their Convex Hull. Complexity: `O(m n)`.
 
 + Regular: Checks if all sides and angles are the same.
+
+The commands used to work with the calculator are those specified at the [formulation of the project](https://github.com/jordi-petit/ap2-poligons-2019#details-of-the-polygon-calculator). They have been implemented in such a way that nothing is changed and the instructions given are perfectly valid. The instructions will be listed below (for the exact behaviour of each command, see the project formulation). No information about the implementation of these commands is given, as they are simple applications for the already specified methods of the `ConvexPolygon` class.
+
++ polygon
++ print
++ area
++ perimeter
++ vertices
++ centroid
++ list
++ save
++ load
++ setcol
++ draw
++ intersection
++ union
++ inside
++ bbox
