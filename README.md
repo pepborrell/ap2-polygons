@@ -1,5 +1,7 @@
 # Project: Implementation of the ConvexPolygon class
 
+This project was required for the Algorithmics and Programming 2 course in the Data Science and Engineering Degree.
+
 This project mainly consists of an implementation of the class `ConvexPolygon` (which, as its name might suggest, represents a 2-dimensional convex polygon in the plane) and a polygon calculator which performs operations with the previously implemented class. The specification and implementation of the class is found in the files called `ConvexPolygon.h` and `ConvexPolygon.cc`.
 
 In order to complement the two main parts of the project, some test cases of different kind have been written. They are located in the folder named `test_cases`.
